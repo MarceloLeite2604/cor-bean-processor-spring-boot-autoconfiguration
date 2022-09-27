@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.figtreelake</groupId>
+	<artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>COR Bean Processor Spring Boot Autoconfiguration</name>
+  <description>A Spring Boot Autoconfiguration to set up COR Bean Processor.</description>
+
+	<modules>
+		<module>cor-bean-processor-spring-boot-autoconfigure</module>
+		<module>cor-bean-processor-spring-boot-starter</module>
+	</modules>
+
+</project>
