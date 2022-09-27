@@ -1,4 +1,4 @@
-package com.github.marceloleite2604.springcorbeanprocessor;
+package com.figtreelake.corbeanprocessor.autoconfigure;
 
 public interface ChainLink<T extends ChainLink<T>> {
 

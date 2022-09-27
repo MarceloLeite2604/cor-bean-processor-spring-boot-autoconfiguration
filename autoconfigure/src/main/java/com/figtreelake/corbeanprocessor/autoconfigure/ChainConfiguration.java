@@ -1,4 +1,4 @@
-package com.github.marceloleite2604.springcorbeanprocessor;
+package com.figtreelake.corbeanprocessor.autoconfigure;
 
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;

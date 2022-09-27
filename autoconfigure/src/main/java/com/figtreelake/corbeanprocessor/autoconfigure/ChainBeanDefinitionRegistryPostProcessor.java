@@ -1,6 +1,6 @@
-package com.github.marceloleite2604.springcorbeanprocessor;
+package com.figtreelake.corbeanprocessor.autoconfigure;
 
-import com.github.marceloleite2604.springcorbeanprocessor.util.ClassUtil;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.ClassUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

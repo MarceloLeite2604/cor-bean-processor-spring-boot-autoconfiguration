@@ -1,4 +1,4 @@
-package com.github.marceloleite2604.springcorbeanprocessor;
+package com.figtreelake.corbeanprocessor.autoconfigure;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

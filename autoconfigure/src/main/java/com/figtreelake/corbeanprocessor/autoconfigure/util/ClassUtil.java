@@ -1,4 +1,4 @@
-package com.github.marceloleite2604.springcorbeanprocessor.util;
+package com.figtreelake.corbeanprocessor.autoconfigure.util;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
