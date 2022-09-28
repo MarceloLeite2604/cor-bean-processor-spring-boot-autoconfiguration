@@ -4,12 +4,9 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@SuppressWarnings("java:S1118")
 @Configuration
 public class ChainConfiguration {
-
-  public ChainConfiguration() {
-    System.out.println("Instantiating ChainConfiguration");
-  }
 
   @Bean
   public static BeanDefinitionRegistryPostProcessor createBeanDefinitionRegistryPostProcessor() {
