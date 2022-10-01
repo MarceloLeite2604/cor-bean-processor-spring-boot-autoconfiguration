@@ -1,27 +1,77 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.ParameterizedTypeContext;
+
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.TypeVariable;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class ClassUtil {
 
-  public List<Type> retrieveGenericInterfaces(Class<?> clazz) {
-    final var classes = retrieveClassHierarchy(clazz);
+  public Set<ParameterizedTypeContext> retrieveGenericInterfacesForClass(Class<?> rootClass) {
+    if (rootClass.isAnnotation() || rootClass.isInterface() || rootClass.isEnum()) {
+      throw new IllegalArgumentException("Argument is not a class.");
+    }
+
+    final var classes = retrieveClassHierarchy(rootClass);
+
+    final var interfaces = retrieveInterfaceFromClasses(classes);
+
+    classes.addAll(interfaces);
+
+    final Map<Type, ParameterizedTypeContext> genericInterfaceContexts = new HashMap<>();
+
+    for (Class<?> clazz : classes) {
+
+      final var parentGenericInterfaceContext = genericInterfaceContexts.get(clazz);
+      Stream.of(clazz.getGenericInterfaces())
+          .forEach(genericInterface -> {
+            if (genericInterface instanceof ParameterizedType parameterizedType) {
+              final var genericInterfaceContextBuilder = ParameterizedTypeContext.builder()
+                  .parameterizedType(parameterizedType);
+
+              final var parameterizedTypeArguments = retrieveParameterizedTypeArguments(
+                  parameterizedType, parentGenericInterfaceContext);
+              genericInterfaceContextBuilder.arguments(parameterizedTypeArguments);
+
+              genericInterfaceContexts.put(parameterizedType.getRawType(), genericInterfaceContextBuilder.build());
+            }
+          });
+    }
+
+    return new HashSet<>(genericInterfaceContexts.values());
+  }
+
+  private Map<String, Class<?>> retrieveParameterizedTypeArguments(
+      ParameterizedType parameterizedType,
+      ParameterizedTypeContext parentParameterizedTypeContext) {
+    final var typeParameters = ((Class<?>) parameterizedType.getRawType()).getTypeParameters();
+    final var typeArguments = parameterizedType.getActualTypeArguments();
+
+    final Map<String, Class<?>> parameterizedTypeArguments = new HashMap<>();
+    for (int index = 0; index < typeParameters.length; index++) {
+      final var typeParameter = typeParameters[index];
+      var typeArgument = typeArguments[index];
+
+      if (typeArgument instanceof TypeVariable<?> typeVariableArgument) {
+        typeArgument = parentParameterizedTypeContext.getArguments()
+            .get(typeVariableArgument.getName());
+      }
+
+      parameterizedTypeArguments.put(typeParameter.getTypeName(), (Class<?>) typeArgument);
+    }
+
+    return parameterizedTypeArguments;
+  }
+
+  private LinkedList<Class<?>> retrieveInterfaceFromClasses(List<Class<?>> classes) {
     final var interfaces = new LinkedList<Class<?>>();
     for (Class<?> c : classes) {
       interfaces.addAll(retrieveInterfacesFromClass(c));
     }
-
-    classes.addAll(interfaces);
-
-    final var genericInterfaces = new LinkedList<Type>();
-    for (Class<?> c : classes) {
-      genericInterfaces.addAll(List.of(c.getGenericInterfaces()));
-    }
-
-    return genericInterfaces;
+    return interfaces;
   }
 
   private List<Class<?>> retrieveClassHierarchy(Class<?> clazz) {

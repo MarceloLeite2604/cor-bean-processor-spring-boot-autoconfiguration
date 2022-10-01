@@ -82,7 +82,7 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
   }
 
   private ParameterizedType retrieveChainLinkInterfaceAsParameterizedType(X bean) {
-    return classUtil.retrieveGenericInterfaces(bean.getClass())
+    return classUtil.retrieveGenericInterfacesForClass(bean.getClass())
         .stream()
         .filter(ParameterizedType.class::isInstance)
         .map(ParameterizedType.class::cast)
