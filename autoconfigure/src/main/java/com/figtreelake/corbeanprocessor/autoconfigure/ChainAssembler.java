@@ -2,24 +2,24 @@ package com.figtreelake.corbeanprocessor.autoconfigure;
 
 import org.springframework.util.Assert;
 
-import java.util.List;
-
 public class ChainAssembler {
 
-    public <U extends ChainLink<U>, T extends ChainLinkBeanContext<U>> T assemble(List<T> chainBeanContexts) {
-        Assert.notEmpty(chainBeanContexts, "Chain bean contexts cannot be null.");
+  public <U extends ChainLink<U>, T extends ChainLinkBeanContext<U>> T assemble(Iterable<T> chainLinkBeanContexts) {
 
-        T first = null;
-        T previous = null;
-        for (T chainBeanContext : chainBeanContexts) {
-            if (first == null) {
-                first = chainBeanContext;
-            } else {
-                previous.getBean().setNext(chainBeanContext.getBean());
-            }
-            previous = chainBeanContext;
-        }
-
-        return first;
+    T first = null;
+    T previous = null;
+    for (T chainBeanContext : chainLinkBeanContexts) {
+      if (first == null) {
+        first = chainBeanContext;
+      } else {
+        previous.getBean()
+            .setNext(chainBeanContext.getBean());
+      }
+      previous = chainBeanContext;
     }
+
+    Assert.notNull(first, "Chain link bean contexts cannot be null.");
+
+    return first;
+  }
 }

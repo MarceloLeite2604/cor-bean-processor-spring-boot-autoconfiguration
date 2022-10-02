@@ -1,7 +1,5 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.DummyInterfaceA;
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.DummyInterfaceB;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.ParameterizedTypeForTests;
 import lombok.experimental.UtilityClass;
 
