@@ -87,10 +87,6 @@ public class ClassUtil {
 
   private List<Class<?>> retrieveInterfacesFromClass(Class<?> clazz) {
 
-    if (clazz == null) {
-      return Collections.emptyList();
-    }
-
     final List<Class<?>> interfaces = new LinkedList<>();
     for (Class<?> anInterface : clazz.getInterfaces()) {
       interfaces.addAll(retrieveInterfacesFromInterface(anInterface));
@@ -101,10 +97,6 @@ public class ClassUtil {
   }
 
   private List<Class<?>> retrieveInterfacesFromInterface(Class<?> iface) {
-
-    if (iface == null) {
-      return Collections.singletonList(iface);
-    }
 
     final List<Class<?>> interfaces = new LinkedList<>();
     for (Class<?> i : iface.getInterfaces()) {

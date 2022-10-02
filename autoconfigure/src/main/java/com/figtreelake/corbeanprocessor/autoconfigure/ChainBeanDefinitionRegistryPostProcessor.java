@@ -1,27 +1,32 @@
 package com.figtreelake.corbeanprocessor.autoconfigure;
 
 import com.figtreelake.corbeanprocessor.autoconfigure.util.ClassUtil;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> implements BeanDefinitionRegistryPostProcessor {
 
   private final ClassUtil classUtil;
 
+  private final ChainAssembler chainAssembler;
+
+  @Getter(AccessLevel.PACKAGE)
   private BeanDefinitionRegistry beanDefinitionRegistry;
 
   private ConfigurableListableBeanFactory configurableListableBeanFactory;
 
-  private final ChainAssembler chainAssembler;
 
   public ChainBeanDefinitionRegistryPostProcessor() {
     this.classUtil = new ClassUtil();
@@ -76,17 +81,22 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
   private Map<Type, List<ChainLinkBeanContext<X>>> mapChainLinkBeanContextsByChainLinkArgumentType(Set<ChainLinkBeanContext<X>> chainLinkBeanContexts) {
     return chainLinkBeanContexts.stream()
         .collect(Collectors.groupingBy(chainLinkBeanContext -> {
-          final ParameterizedType chainLinkParameterizedType = retrieveChainLinkInterfaceAsParameterizedType(chainLinkBeanContext.getBean());
-          return chainLinkParameterizedType.getActualTypeArguments()[0];
+          final var parameterizedTypeContext = retrieveChainLinkInterfaceAsParameterizedTypeContext(chainLinkBeanContext.getBean());
+          return parameterizedTypeContext.getArguments()
+              .values()
+              .iterator()
+              .next();
         }));
   }
 
-  private ParameterizedType retrieveChainLinkInterfaceAsParameterizedType(X bean) {
+  private ParameterizedTypeContext retrieveChainLinkInterfaceAsParameterizedTypeContext(X bean) {
     return classUtil.retrieveGenericInterfacesForClass(bean.getClass())
         .stream()
-        .filter(ParameterizedType.class::isInstance)
-        .map(ParameterizedType.class::cast)
-        .filter(parameterizedType -> ChainLink.class.equals(parameterizedType.getRawType()))
+        .filter(context -> {
+          final var rawType = context.getParameterizedType()
+              .getRawType();
+          return ChainLink.class.equals(rawType);
+        })
         .findFirst()
         .orElseThrow();
   }
