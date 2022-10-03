@@ -8,7 +8,24 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Autoconfigure</name>
-  <description>A Spring Boot autoconfiguration to help creating the chain of responsibility (COR) bean processor.</description>
+  <description>A Spring Boot autoconfiguration to help creating the chain of responsibility (COR) bean processor.
+  </description>
+
+  <developers>
+    <developer>
+      <id>MarceloLeite2604</id>
+      <name>Marcelo Leite</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
+    </connection>
+    <developerConnection>
+      scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
+    </developerConnection>
+    <url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+  </scm>
 
   <properties>
     <maven.compiler.target>17</maven.compiler.target>
@@ -18,9 +35,9 @@
 
   <dependencies>
     <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-autoconfigure</artifactId>
-		</dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -67,5 +84,36 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

@@ -16,6 +16,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <developers>
+    <developer>
+      <id>MarceloLeite2604</id>
+      <name>Marcelo Leite</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</connection>
+    <developerConnection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</developerConnection>
+    <url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>com.figtreelake</groupId>
