@@ -1,6 +1,5 @@
 package com.figtreelake.corbeanprocessor.autoconfigure;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.ClassUtil;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.*;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanDefinitionFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ParameterizedTypeContextFixture;
@@ -28,7 +27,7 @@ class ChainBeanDefinitionRegistryPostProcessorTest {
   private ChainBeanDefinitionRegistryPostProcessor<?> chainBeanDefinitionRegistryPostProcessor;
 
   @Mock
-  private ClassUtil classUtil;
+  private ParameterizedTypesRetriever parameterizedTypesRetriever;
 
   @Mock
   private ChainAssembler chainAssembler;
@@ -91,7 +90,7 @@ class ChainBeanDefinitionRegistryPostProcessorTest {
     when(mockedBeanDefinitionRegistry.getBeanDefinition(dummyChainLinkDBeanName))
         .thenReturn(dummyChainLinkDBeanDefinition);
 
-    when(classUtil.retrieveGenericInterfacesForClass(any()))
+    when(parameterizedTypesRetriever.retrieveForClass(any()))
         .thenReturn(Set.of(parameterizedTypeContext));
 
 

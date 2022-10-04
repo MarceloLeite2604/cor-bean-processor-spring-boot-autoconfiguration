@@ -1,6 +1,5 @@
-package com.figtreelake.corbeanprocessor.autoconfigure.util;
+package com.figtreelake.corbeanprocessor.autoconfigure;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.ParameterizedTypeContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.*;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ListParameterizedTypeContextFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.ParameterizedTypeEqualsPredicate;
@@ -18,19 +17,19 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ClassUtilTest {
+class ParameterizedTypesRetrieverTest {
 
-  private ClassUtil classUtil;
+  private ParameterizedTypesRetriever parameterizedTypesRetriever;
 
   @BeforeEach
   void setUp() {
-    classUtil = new ClassUtil();
+    parameterizedTypesRetriever = new ParameterizedTypesRetriever();
   }
 
   @ParameterizedTest
   @MethodSource("provideParametersForShouldReturnAllGenericInterfacesTest")
   void shouldReturnAllGenericInterfaces(Class<?> inputClass, List<ParameterizedTypeContext> expectedParameterizedTypeContexts) {
-    final var genericInterfaceContexts = classUtil.retrieveGenericInterfacesForClass(inputClass);
+    final var genericInterfaceContexts = parameterizedTypesRetriever.retrieveForClass(inputClass);
 
     RecursiveComparisonConfiguration recursiveComparisonConfiguration = RecursiveComparisonConfiguration.builder()
         .withEqualsForType(new ParameterizedTypeEqualsPredicate(), ParameterizedType.class)
@@ -49,7 +48,7 @@ class ClassUtilTest {
   })
   @ParameterizedTest
   void shouldThrowIllegalArgumentExceptionWhenRetrievingGenericInterfacesNonClassTypes(Class<?> nonClass) {
-    assertThrows(IllegalArgumentException.class, () -> classUtil.retrieveGenericInterfacesForClass(nonClass));
+    assertThrows(IllegalArgumentException.class, () -> parameterizedTypesRetriever.retrieveForClass(nonClass));
   }
 
   private static Stream<Arguments> provideParametersForShouldReturnAllGenericInterfacesTest() {

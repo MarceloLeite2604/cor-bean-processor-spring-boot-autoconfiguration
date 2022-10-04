@@ -1,6 +1,5 @@
 package com.figtreelake.corbeanprocessor.autoconfigure;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.ClassUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +14,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A {@link BeanDefinitionRegistryPostProcessor} implementation to retrieve
+ * {@link ChainLink} beans that implements the same type and concatenate them
+ * to build a chain of responsibility.
+ * @param <X> Defines a consistent {@link ChainLink} implementation that will
+ *           be used throughout all methods on this class. It can be defined
+ *           as a wildcard on the actual implementation.
+ */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> implements BeanDefinitionRegistryPostProcessor {
 
-  private final ClassUtil classUtil;
+  private final ParameterizedTypesRetriever parameterizedTypesRetriever;
 
   private final ChainAssembler chainAssembler;
 
@@ -27,9 +34,11 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
 
   private ConfigurableListableBeanFactory configurableListableBeanFactory;
 
-
+  /**
+   * Instantiates an object of type {@link ChainBeanDefinitionRegistryPostProcessor}.
+   */
   public ChainBeanDefinitionRegistryPostProcessor() {
-    this.classUtil = new ClassUtil();
+    this.parameterizedTypesRetriever = new ParameterizedTypesRetriever();
     this.chainAssembler = new ChainAssembler();
   }
 
@@ -90,7 +99,7 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
   }
 
   private ParameterizedTypeContext retrieveChainLinkInterfaceAsParameterizedTypeContext(X bean) {
-    return classUtil.retrieveGenericInterfacesForClass(bean.getClass())
+    return parameterizedTypesRetriever.retrieveForClass(bean.getClass())
         .stream()
         .filter(context -> {
           final var rawType = context.getParameterizedType()

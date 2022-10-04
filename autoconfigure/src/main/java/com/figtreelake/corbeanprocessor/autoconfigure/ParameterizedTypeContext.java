@@ -1,10 +1,19 @@
 package com.figtreelake.corbeanprocessor.autoconfigure;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
+import lombok.ToString;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 
+/**
+ * Stores information about a generic type implemented by a class.
+ * @author MarceloLeite2604
+ */
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString

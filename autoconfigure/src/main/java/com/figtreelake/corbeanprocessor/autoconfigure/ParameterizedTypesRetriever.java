@@ -1,16 +1,36 @@
-package com.figtreelake.corbeanprocessor.autoconfigure.util;
-
-import com.figtreelake.corbeanprocessor.autoconfigure.ParameterizedTypeContext;
+package com.figtreelake.corbeanprocessor.autoconfigure;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
-public class ClassUtil {
+/**
+ * Contains all logic to retrieve information about parameterized types
+ * implemented by a specific class.
+ * Parameterized types are Java classes and interfaces that uses generic types.
+ * Its context also provides information about how such generic types are
+ * resolved (which types were used to implement generic types).
+ *
+ * @author MarceloLeite2604
+ */
+public class ParameterizedTypesRetriever {
 
-  public Set<ParameterizedTypeContext> retrieveGenericInterfacesForClass(Class<?> rootClass) {
+  /**
+   * Retrieve the parameterized type context of all generic interfaces
+   * implemented by such class, its superclasses and interfaces
+   * implemented by them.
+   * @param rootClass Root class to retrieve all parameterized context.
+   * @return The context of all parameterized classes implemented.
+   */
+  public Set<ParameterizedTypeContext> retrieveForClass(Class<?> rootClass) {
     if (rootClass.isAnnotation() || rootClass.isInterface() || rootClass.isEnum()) {
       throw new IllegalArgumentException("Argument is not a class.");
     }
@@ -21,11 +41,11 @@ public class ClassUtil {
 
     classes.addAll(interfaces);
 
-    final Map<Type, ParameterizedTypeContext> genericInterfaceContexts = new HashMap<>();
+    final Map<Type, ParameterizedTypeContext> parameterizedTypeContextsByType = new HashMap<>();
 
     for (Class<?> clazz : classes) {
 
-      final var parentGenericInterfaceContext = genericInterfaceContexts.get(clazz);
+      final var parentGenericInterfaceContext = parameterizedTypeContextsByType.get(clazz);
       Stream.of(clazz.getGenericInterfaces())
           .forEach(genericInterface -> {
             if (genericInterface instanceof ParameterizedType parameterizedType) {
@@ -36,12 +56,12 @@ public class ClassUtil {
                   parameterizedType, parentGenericInterfaceContext);
               genericInterfaceContextBuilder.arguments(parameterizedTypeArguments);
 
-              genericInterfaceContexts.put(parameterizedType.getRawType(), genericInterfaceContextBuilder.build());
+              parameterizedTypeContextsByType.put(parameterizedType.getRawType(), genericInterfaceContextBuilder.build());
             }
           });
     }
 
-    return new HashSet<>(genericInterfaceContexts.values());
+    return new HashSet<>(parameterizedTypeContextsByType.values());
   }
 
   private Map<String, Class<?>> retrieveParameterizedTypeArguments(
@@ -68,8 +88,8 @@ public class ClassUtil {
 
   private LinkedList<Class<?>> retrieveInterfaceFromClasses(List<Class<?>> classes) {
     final var interfaces = new LinkedList<Class<?>>();
-    for (Class<?> c : classes) {
-      interfaces.addAll(retrieveInterfacesFromClass(c));
+    for (Class<?> clazz : classes) {
+      interfaces.addAll(retrieveInterfacesFromClass(clazz));
     }
     return interfaces;
   }
