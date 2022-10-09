@@ -6,19 +6,17 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.beans.factory.config.BeanDefinition;
 
-/**
- * Context of a bean created by Spring that implements {@link ChainLink}
- * interface.
- * @param <T> The chain link bean type.
- */
-@Builder
+
+@Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class ChainLinkBeanContext<T extends ChainLink<T>> {
+public class ChainLinkBeanDefinitionContext<T extends ChainLink<T>> {
 
-    private final T bean;
+    private final BeanDefinition definition;
 
     private final String name;
 
-    private final BeanDefinition definition;
+    private final Class<T> beanClass;
+
+    private final ParameterizedTypeContext chainLinkTypeContext;
 }

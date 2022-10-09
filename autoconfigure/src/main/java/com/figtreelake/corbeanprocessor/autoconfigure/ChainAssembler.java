@@ -1,37 +1,23 @@
 package com.figtreelake.corbeanprocessor.autoconfigure;
 
-import org.springframework.util.Assert;
-
 /**
  * Concatenate links to build a chain of responsibility.
  * @author MarceloLeite2604
  */
 public class ChainAssembler {
 
-  /**
-   * Concatenates chain or responsibility links, setting the next object of
-   * each link.
-   * @param chainLinkBeanContexts An iterable object containing the context of
-   *                              all links that must be chained together
-   * @return The context of the first chain link.
-   * @param <U> Chain link implementation class/interface.
-   */
-  public <U extends ChainLink<U>> ChainLinkBeanContext<U> assemble(Iterable<ChainLinkBeanContext<U>> chainLinkBeanContexts) {
+  public <T extends ChainLink<T>> void assemble(Iterable<T> chainLinks) {
 
-    ChainLinkBeanContext<U> first = null;
-    ChainLinkBeanContext<U> previous = null;
-    for (ChainLinkBeanContext<U> chainBeanContext : chainLinkBeanContexts) {
-      if (first == null) {
-        first = chainBeanContext;
-      } else {
-        previous.getBean()
-            .setNext(chainBeanContext.getBean());
+    T previous = null;
+    for (T chainLink : chainLinks) {
+      if (previous != null) {
+        previous.setNext(chainLink);
       }
-      previous = chainBeanContext;
+      previous = chainLink;
     }
+  }
 
-    Assert.notNull(first, "Chain link bean contexts cannot be null.");
-
-    return first;
+  public <X extends ChainLink<X>> void assemble(ChainContext<X> chainContext) {
+    assemble(chainContext.getSortedChainLinks());
   }
 }

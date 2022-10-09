@@ -55,7 +55,7 @@ class ChainAssemblerTest {
 
     final var linksAlreadyFound = new LinkedList<>();
 
-    DummyAbstractChainLink firstLink = firstDummyChainLinkBeanContext.getBean();
+    DummyAbstractChainLink firstLink = firstDummyChainLinkBeanContext.getBeanDefinition();
     assertThat(firstLink).isIn(chainLinks);
 
     linksAlreadyFound.add(firstLink);
@@ -82,7 +82,7 @@ class ChainAssemblerTest {
   @Test
   void shouldThrowIllegalStateExceptionWhenChainLinkBeanContextIterableIsNull() {
 
-    final Set<ChainLinkBeanContext<DummyAbstractChainLink>> chainLinkBeanContextIterable = Collections.emptySet();
-    assertThrows(IllegalArgumentException.class, () -> chainAssembler.assemble(chainLinkBeanContextIterable));
+    final Set<ChainLinkBeanDefinitionContext<DummyAbstractChainLink>> chainLinkBeanDefinitionContextIterable = Collections.emptySet();
+    assertThrows(IllegalArgumentException.class, () -> chainAssembler.assemble(chainLinkBeanDefinitionContextIterable));
   }
 }

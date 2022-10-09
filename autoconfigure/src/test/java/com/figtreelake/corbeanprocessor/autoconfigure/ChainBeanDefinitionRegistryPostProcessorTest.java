@@ -95,7 +95,7 @@ class ChainBeanDefinitionRegistryPostProcessorTest {
 
 
     when(chainAssembler.assemble(any())).thenAnswer(invocationOnMock -> {
-      final var firstArgument = (Iterable<ChainLinkBeanContext<DummyAbstractChainLink>>) invocationOnMock.getArgument(0);
+      final var firstArgument = (Iterable<ChainLinkBeanDefinitionContext<DummyAbstractChainLink>>) invocationOnMock.getArgument(0);
       return firstArgument.iterator()
           .next();
     });
