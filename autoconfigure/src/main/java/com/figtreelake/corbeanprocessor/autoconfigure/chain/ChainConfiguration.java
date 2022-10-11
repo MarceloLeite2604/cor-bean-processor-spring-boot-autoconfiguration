@@ -1,5 +1,7 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.chain;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.link.ChainLink;
+import com.figtreelake.corbeanprocessor.autoconfigure.link.ChainLinkBeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +17,10 @@ public class ChainConfiguration {
   /**
    * Creates a bean of type {@link BeanDefinitionRegistryPostProcessor}
    * responsible for processing {@link ChainLink} beans.
-   * @return An instance of {@link ChainBeanDefinitionRegistryPostProcessor}.
+   * @return An instance of {@link ChainLinkBeanDefinitionRegistryPostProcessor}.
    */
   @Bean
   public static BeanDefinitionRegistryPostProcessor createBeanDefinitionRegistryPostProcessor() {
-    return new ChainBeanDefinitionRegistryPostProcessor<>();
+    return new ChainLinkBeanDefinitionRegistryPostProcessor<>();
   }
 }

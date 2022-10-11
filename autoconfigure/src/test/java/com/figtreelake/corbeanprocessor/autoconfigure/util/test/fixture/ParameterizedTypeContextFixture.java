@@ -1,7 +1,7 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.ChainLink;
-import com.figtreelake.corbeanprocessor.autoconfigure.ParameterizedTypeContext;
+import com.figtreelake.corbeanprocessor.autoconfigure.link.ChainLink;
+import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

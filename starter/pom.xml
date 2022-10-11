@@ -3,9 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.figtreelake</groupId>
+  <parent>
+    <groupId>com.figtreelake</groupId>
+    <artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+  </parent>
+
   <artifactId>cor-bean-processor-spring-boot-starter</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Starter</name>
   <description>A Spring Boot starter to help creating the chain of responsibility (COR) bean processor.</description>
@@ -33,7 +37,7 @@
     <dependency>
       <groupId>com.figtreelake</groupId>
       <artifactId>cor-bean-processor-spring-boot-autoconfigure</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

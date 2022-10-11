@@ -1,4 +1,4 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -10,20 +10,24 @@ public class ChainLinkBeanDefinitionContextComparator implements Comparator<Chai
   @Override
   public int compare(ChainLinkBeanDefinitionContext firstContext, ChainLinkBeanDefinitionContext secondContext) {
     if (firstContext.getDefinition()
-          .isPrimary()) {
-        return -1;
-      }
-
+        .isPrimary()) {
       if (secondContext.getDefinition()
           .isPrimary()) {
-        return 1;
+        return 0;
       }
+      return -1;
+    }
 
-      final var firstContextClassOrder = retrieveClassOrder(firstContext.getBeanClass());
+    if (secondContext.getDefinition()
+        .isPrimary()) {
+      return 1;
+    }
 
-      final var secondContextClassOrder = retrieveClassOrder(secondContext.getBeanClass());
+    final var firstContextClassOrder = retrieveClassOrder(firstContext.getBeanClass());
 
-      return Integer.compare(firstContextClassOrder, secondContextClassOrder);
+    final var secondContextClassOrder = retrieveClassOrder(secondContext.getBeanClass());
+
+    return Integer.compare(firstContextClassOrder, secondContextClassOrder);
   }
 
   private int retrieveClassOrder(Class<?> clazz) {

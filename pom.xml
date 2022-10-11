@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.figtreelake</groupId>
 	<artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>COR Bean Processor Spring Boot Autoconfiguration</name>
   <description>A Spring Boot autoconfiguration to set up COR Bean Processor.</description>

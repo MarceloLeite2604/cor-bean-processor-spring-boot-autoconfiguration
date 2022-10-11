@@ -1,4 +1,4 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
 /**
  * This interface must be implemented by all classes that must be concatenated

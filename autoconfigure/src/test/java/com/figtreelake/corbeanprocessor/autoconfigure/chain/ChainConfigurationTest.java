@@ -1,4 +1,4 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.chain;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;

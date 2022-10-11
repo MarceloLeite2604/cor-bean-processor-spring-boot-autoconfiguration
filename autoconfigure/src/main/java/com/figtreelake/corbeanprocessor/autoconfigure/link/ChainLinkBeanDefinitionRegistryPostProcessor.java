@@ -1,6 +1,9 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.StreamUtil;
+import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainAssembler;
+import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainContext;
+import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
+import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,17 +13,19 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
+public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
 
   private final ParameterizedTypesRetriever parameterizedTypesRetriever;
 
@@ -31,9 +36,9 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
   private ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
 
   /**
-   * Instantiates an object of type {@link ChainBeanDefinitionRegistryPostProcessor}.
+   * Instantiates an object of type {@link ChainLinkBeanDefinitionRegistryPostProcessor}.
    */
-  public ChainBeanDefinitionRegistryPostProcessor() {
+  public ChainLinkBeanDefinitionRegistryPostProcessor() {
     parameterizedTypesRetriever = new ParameterizedTypesRetriever();
     chainAssembler = new ChainAssembler();
     chainLinkBeanDefinitionContextComparator = new ChainLinkBeanDefinitionContextComparator();
@@ -85,14 +90,16 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
 
     return Arrays.stream(beanDefinitionRegistry.getBeanDefinitionNames())
         .map(chainLinkChainLinkBeanDefinitionContextFactory::create)
-        .flatMap(StreamUtil::getOptionalIfPresent)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
         .map(this::createChainLinkContextByArgumentMapEntry)
         .collect(Collectors.toMap(
             Map.Entry::getKey,
             Map.Entry::getValue,
             (l1, l2) -> {
-              l1.addAll(l2);
-              return l1;
+              final var result = new ArrayList<>(l1);
+              result.addAll(l2);
+              return result;
             },
             HashMap::new));
   }
@@ -116,10 +123,9 @@ public class ChainBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> im
         .next();
   }
 
-
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-    // Unused.
+    /* Not used. */
   }
 
   @Override

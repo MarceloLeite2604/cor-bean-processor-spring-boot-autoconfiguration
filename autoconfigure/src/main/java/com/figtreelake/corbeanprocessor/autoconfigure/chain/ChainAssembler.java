@@ -1,4 +1,7 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.chain;
+
+import com.figtreelake.corbeanprocessor.autoconfigure.link.ChainLink;
+import org.springframework.util.Assert;
 
 /**
  * Concatenate links to build a chain of responsibility.
@@ -7,6 +10,7 @@ package com.figtreelake.corbeanprocessor.autoconfigure;
 public class ChainAssembler {
 
   public <T extends ChainLink<T>> void assemble(Iterable<T> chainLinks) {
+    Assert.notNull(chainLinks, "Chain links iterable cannot be null.");
 
     T previous = null;
     for (T chainLink : chainLinks) {
@@ -18,6 +22,7 @@ public class ChainAssembler {
   }
 
   public <X extends ChainLink<X>> void assemble(ChainContext<X> chainContext) {
+    Assert.notNull(chainContext, "Chain context cannot be null.");
     assemble(chainContext.getSortedChainLinks());
   }
 }

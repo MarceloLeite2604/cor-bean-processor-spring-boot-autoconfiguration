@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.figtreelake.corbeanprocessor.autoconfigure.ChainConfiguration
+com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainConfiguration

@@ -1,5 +1,7 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.chain;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.link.ChainLink;
+import com.figtreelake.corbeanprocessor.autoconfigure.link.ChainLinkBeanDefinitionContext;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +26,7 @@ public class ChainContext<T extends ChainLink<T>> {
     chainLinkBeansByName.put(name, (T) bean);
   }
 
-  boolean hasAllChainLinks() {
+  public boolean hasAllChainLinks() {
     return beanNames.size() == chainLinkBeansByName.size();
   }
 

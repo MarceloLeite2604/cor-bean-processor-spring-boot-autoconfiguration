@@ -1,4 +1,4 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

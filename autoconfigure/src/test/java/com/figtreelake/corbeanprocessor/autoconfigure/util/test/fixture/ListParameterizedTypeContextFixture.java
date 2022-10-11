@@ -1,6 +1,6 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.ParameterizedTypeContext;
+import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.DummyInterfaceA;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.DummyInterfaceB;
 import lombok.experimental.UtilityClass;

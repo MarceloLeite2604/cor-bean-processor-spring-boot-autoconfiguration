@@ -1,5 +1,6 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public class ChainLinkBeanDefinitionContext<T extends ChainLink<T>> {
 
     private final String name;
 
-    private final Class<T> beanClass;
+    private final Class<? extends T> beanClass;
 
     private final ParameterizedTypeContext chainLinkTypeContext;
 }
