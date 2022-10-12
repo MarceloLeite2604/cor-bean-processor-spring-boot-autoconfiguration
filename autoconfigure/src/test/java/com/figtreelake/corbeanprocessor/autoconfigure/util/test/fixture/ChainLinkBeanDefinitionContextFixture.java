@@ -11,15 +11,26 @@ public class ChainLinkBeanDefinitionContextFixture {
   public static final String NAME = "nameValue";
 
   public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(Class<? extends T> beanClass) {
-    final var definition = BeanDefinitionFixture.create();
-    return create(beanClass, definition);
+    return create(beanClass, NAME);
+  }
+
+  public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(Class<? extends T> beanClass, String name) {
+    final var beanDefinition = BeanDefinitionFixture.create(beanClass);
+    return create(beanClass, beanDefinition, name);
   }
 
   public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(Class<? extends T> beanClass, BeanDefinition beanDefinition) {
+    return create(beanClass, beanDefinition, NAME);
+  }
+
+  public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(
+      Class<? extends T> beanClass,
+      BeanDefinition beanDefinition,
+      String name) {
     final var chainLinkTypeContext = ParameterizedTypeContextFixture.createForChainLink(beanClass);
     return ChainLinkBeanDefinitionContext.<T>builder()
         .definition(beanDefinition)
-        .name(NAME)
+        .name(name)
         .beanClass(beanClass)
         .chainLinkTypeContext(chainLinkTypeContext)
         .build();

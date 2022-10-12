@@ -36,22 +36,22 @@ public class BeanFixture {
       THIRD_BEAN_NAME,
       FOURTH_BEAN_NAME);
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public static <T extends ChainLink<T>> T createFirstBean(Class<T> beanClass) {
     return (T) FIRST_BEAN;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public static <T extends ChainLink<T>> T createSecondBean(Class<T> beanClass) {
     return (T) SECOND_BEAN;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public static <T extends ChainLink<T>> T createThirdBean(Class<T> beanClass) {
     return (T) THIRD_BEAN;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public static <T extends ChainLink<T>> T createFourthBean(Class<T> beanClass) {
     return (T) FOURTH_BEAN;
   }
