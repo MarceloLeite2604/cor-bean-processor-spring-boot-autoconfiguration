@@ -11,6 +11,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("java:S2187")
+@ToString
 public class BeanDefinitionForTests implements BeanDefinition {
 
   @Getter

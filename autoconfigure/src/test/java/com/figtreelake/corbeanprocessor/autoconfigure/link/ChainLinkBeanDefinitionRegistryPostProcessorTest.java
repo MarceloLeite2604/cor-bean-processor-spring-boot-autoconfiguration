@@ -1,47 +1,100 @@
-package com.figtreelake.corbeanprocessor.autoconfigure;
+package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.*;
+import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainAssembler;
+import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainContext;
+import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyAbstractChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanDefinitionFixture;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanFixture;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ChainContextFixture;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ChainLinkBeanContextFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ParameterizedTypeContextFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
-import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ChainLinkBeanDefinitionRegistryPostProcessorTest {
+class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
 
-//  @InjectMocks
-//  private ChainBeanDefinitionRegistryPostProcessor<?> chainBeanDefinitionRegistryPostProcessor;
-//
-//  @Mock
-//  private ParameterizedTypesRetriever parameterizedTypesRetriever;
-//
-//  @Mock
-//  private ChainAssembler chainAssembler;
-//
-//  @Test
-//  void shouldUpdateBeanDefinitionRegistryField() {
-//
-//    final var mockedBeanDefinitionRegistry = mock(BeanDefinitionRegistry.class);
-//
-//    chainBeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry(mockedBeanDefinitionRegistry);
-//
-//    assertThat(chainBeanDefinitionRegistryPostProcessor.getBeanDefinitionRegistry())
-//        .isEqualTo(mockedBeanDefinitionRegistry);
-//  }
+  @InjectMocks
+  private ChainLinkBeanDefinitionRegistryPostProcessor<T> chainBeanDefinitionRegistryPostProcessor;
+
+  @Mock
+  private ParameterizedTypesRetriever parameterizedTypesRetriever;
+
+  @Mock
+  private ChainAssembler chainAssembler;
+
+  @Mock
+  private ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void shouldCreateChainContexts() {
+
+    final var rootClass = (Class<T>) DummyAbstractChainLink.class;
+
+    final var chainLinkArgumentClass = Float.class;
+
+    final Set<ChainContext<T>> expectedChainContexts = createExpectedChainContexts(rootClass, chainLinkArgumentClass);
+
+    final var mockedBeanDefinitionRegistry = mock(BeanDefinitionRegistry.class);
+
+    when(mockedBeanDefinitionRegistry.getBeanDefinitionNames()).thenReturn(BeanFixture.BEAN_NAMES_ARRAY);
+
+    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.FIRST_BEAN_NAME))
+        .thenReturn(BeanDefinitionFixture.create(BeanFixture.FIRST_BEAN_CLASS));
+
+    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.SECOND_BEAN_NAME))
+        .thenReturn(BeanDefinitionFixture.create(BeanFixture.SECOND_BEAN_CLASS));
+
+    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.THIRD_BEAN_NAME))
+        .thenReturn(BeanDefinitionFixture.create(BeanFixture.THIRD_BEAN_CLASS));
+
+    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.FOURTH_BEAN_NAME))
+        .thenReturn(BeanDefinitionFixture.create(BeanFixture.FOURTH_BEAN_CLASS));
+
+    when(parameterizedTypesRetriever.retrieveForClass(any())).thenReturn(
+        Set.of(ParameterizedTypeContextFixture.createForChainLink(chainLinkArgumentClass)));
+
+    chainBeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry(mockedBeanDefinitionRegistry);
+
+    assertThat(chainBeanDefinitionRegistryPostProcessor.getChainContexts(rootClass))
+        .usingRecursiveFieldByFieldElementComparator()
+        .containsExactlyElementsOf(expectedChainContexts);
+  }
+
+  private Set<ChainContext<T>> createExpectedChainContexts(Class<T> rootClass, Class<Float> chainLinkArgumentClass) {
+    
+    final var beanDefinitionContexts = BeanFixture.createBeansMap(rootClass)
+        .entrySet()
+        .stream()
+        .map(entry -> ChainLinkBeanContextFixture.create(entry, ParameterizedTypeContextFixture.createForChainLink(chainLinkArgumentClass)))
+        .toList();
+
+    beanDefinitionContexts.get(0)
+        .getDefinition()
+        .setPrimary(true);
+
+    final var expectedChainContext = ChainContextFixture.create(rootClass)
+        .toBuilder()
+        .chainLinkBeansByName(null)
+        .beanDefinitionContexts(beanDefinitionContexts)
+        .build();
+
+    return Set.of(expectedChainContext);
+  }
+
 //
 //  @SuppressWarnings({"rawtypes", "unchecked"})
 //  @Test

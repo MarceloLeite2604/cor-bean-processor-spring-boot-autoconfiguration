@@ -15,18 +15,22 @@ import java.util.Map;
 public class BeanFixture {
 
   public static final ChainLink<?> FIRST_BEAN = new DummyChainLinkA();
+  public static final Class<?> FIRST_BEAN_CLASS = FIRST_BEAN.getClass();
   public static final String FIRST_BEAN_NAME = FIRST_BEAN.getClass()
       .getSimpleName();
 
   public static final ChainLink<?> SECOND_BEAN = new DummyChainLinkB();
+  public static final Class<?> SECOND_BEAN_CLASS = SECOND_BEAN.getClass();
   public static final String SECOND_BEAN_NAME = SECOND_BEAN.getClass()
       .getSimpleName();
 
   public static final ChainLink<?> THIRD_BEAN = new DummyChainLinkC();
+  public static final Class<?> THIRD_BEAN_CLASS = THIRD_BEAN.getClass();
   public static final String THIRD_BEAN_NAME = THIRD_BEAN.getClass()
       .getSimpleName();
 
   public static final ChainLink<?> FOURTH_BEAN = new DummyChainLinkD();
+  public static final Class<?> FOURTH_BEAN_CLASS = FOURTH_BEAN.getClass();
   public static final String FOURTH_BEAN_NAME = FOURTH_BEAN.getClass()
       .getSimpleName();
 
@@ -35,6 +39,8 @@ public class BeanFixture {
       SECOND_BEAN_NAME,
       THIRD_BEAN_NAME,
       FOURTH_BEAN_NAME);
+
+  public static final String[] BEAN_NAMES_ARRAY = BEAN_NAMES.toArray(String[]::new);
 
   @SuppressWarnings({"unchecked", "unused"})
   public static <T extends ChainLink<T>> T createFirstBean(Class<T> beanClass) {

@@ -31,9 +31,9 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private final ChainAssembler chainAssembler;
 
-  private Set<ChainContext<X>> chainContexts;
+  private final ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
 
-  private ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
+  private Set<ChainContext<X>> chainContexts;
 
   /**
    * Instantiates an object of type {@link ChainLinkBeanDefinitionRegistryPostProcessor}.
@@ -83,13 +83,13 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private Map<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> createChainLinkBeansDefinitionsContextsByArgumentTypeMap(BeanDefinitionRegistry beanDefinitionRegistry) {
 
-    final var chainLinkChainLinkBeanDefinitionContextFactory = ChainLinkBeanDefinitionContextFactory.<X>builder()
+    final var chainLinkBeanDefinitionContextFactory = ChainLinkBeanDefinitionContextFactory.<X>builder()
         .beanDefinitionRegistry(beanDefinitionRegistry)
         .parameterizedTypesRetriever(parameterizedTypesRetriever)
         .build();
 
     return Arrays.stream(beanDefinitionRegistry.getBeanDefinitionNames())
-        .map(chainLinkChainLinkBeanDefinitionContextFactory::create)
+        .map(chainLinkBeanDefinitionContextFactory::create)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .map(this::createChainLinkContextByArgumentMapEntry)
@@ -107,7 +107,7 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private Map.Entry<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> createChainLinkContextByArgumentMapEntry(ChainLinkBeanDefinitionContext<X> context) {
     final var key = retrieveChainLinkArgumentClass(context.getChainLinkTypeContext());
-    return Map.entry(key, List.of(context));
+    return Map.entry(key, new ArrayList<>(List.of(context)));
   }
 
   private List<ChainLinkBeanDefinitionContext<X>> sortChainLinkBeansDefinitionsContexts(List<ChainLinkBeanDefinitionContext<X>> chainLinkBeansDefinitionsContexts) {
@@ -148,5 +148,10 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
       chainAssembler.assemble(chainContext);
     }
     return bean;
+  }
+
+  @SuppressWarnings({"unused", "java:S1905", "RedundantCast"})
+  Set<ChainContext<X>> getChainContexts(Class<X> clazz) {
+    return (Set<ChainContext<X>>) chainContexts;
   }
 }
