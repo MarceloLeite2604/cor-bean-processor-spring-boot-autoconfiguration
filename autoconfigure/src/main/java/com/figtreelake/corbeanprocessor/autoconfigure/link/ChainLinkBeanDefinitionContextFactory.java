@@ -20,7 +20,7 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
 
   private final ParameterizedTypesRetriever parameterizedTypesRetriever;
 
-  public  Optional<ChainLinkBeanDefinitionContext<X>> create(String beanName) {
+  public Optional<ChainLinkBeanDefinitionContext<X>> create(String beanName) {
     return Optional.of(createContext(beanName))
         .flatMap(this::addBeanClass)
         .flatMap(this::addChainLinkTypeContext);
@@ -31,7 +31,8 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
 
     return ChainLinkBeanDefinitionContext.<X>builder()
         .name(beanName)
-        .definition(beanDefinition).build();
+        .definition(beanDefinition)
+        .build();
   }
 
   private Optional<ChainLinkBeanDefinitionContext<X>> addBeanClass(ChainLinkBeanDefinitionContext<X> context) {
@@ -50,18 +51,69 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
     return Optional.of(updatedContext);
   }
 
-  @SuppressWarnings("unchecked")
   private Optional<Class<X>> retrieveBeanClass(BeanDefinition beanDefinition) {
-    final var className = beanDefinition.getBeanClassName();
-    if (className == null) {
+    var optionalBeanClassName = retrieveBeanClassName(beanDefinition);
+
+    if (optionalBeanClassName.isEmpty()) {
       return Optional.empty();
     }
+
+    final var className = optionalBeanClassName.get();
+
+    return retrieveClass(className);
+  }
+
+  private Optional<String> retrieveBeanClassName(BeanDefinition beanDefinition) {
+    final var optionalBeanClassName = Optional.ofNullable(beanDefinition.getBeanClassName());
+
+    if (optionalBeanClassName.isPresent()) {
+      return optionalBeanClassName;
+    }
+
+    return retrieveBeanClassThroughBeanFactory(beanDefinition);
+  }
+
+  private Optional<String> retrieveBeanClassThroughBeanFactory(BeanDefinition beanDefinition) {
+    final var factoryMethodName = beanDefinition.getFactoryMethodName();
+    if (factoryMethodName == null) {
+      return Optional.empty();
+    }
+
+    final var factoryBeanName = beanDefinition.getFactoryBeanName();
+    if (factoryBeanName == null) {
+      return Optional.empty();
+    }
+
+    final var factoryBeanDefinition = beanDefinitionRegistry.getBeanDefinition(factoryBeanName);
+
+    final var factoryBeanClassName = factoryBeanDefinition.getBeanClassName();
+
+    final var optionalFactoryBeanClass = retrieveClass(factoryBeanClassName);
+
+    if (optionalFactoryBeanClass.isEmpty()) {
+      return Optional.empty();
+    }
+
+    final var factoryBeanClass = optionalFactoryBeanClass.get();
+
     try {
-      final var beanClass = Class.forName(className);
-      if (!ChainLink.class.isAssignableFrom(beanClass)) {
-        return Optional.empty();
-      }
-      return Optional.of((Class<X>) beanClass);
+      final var method = factoryBeanClass.getMethod(factoryMethodName);
+
+      return Optional.ofNullable(method.getGenericReturnType()
+          .getTypeName());
+
+    } catch (NoSuchMethodException noSuchMethodException) {
+      final var message = String.format("Exception thrown while searching for method \"%s\" on class \"%s\".", factoryMethodName, factoryBeanClassName);
+      log.warn(message, noSuchMethodException);
+      return Optional.empty();
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> Optional<Class<T>> retrieveClass(String className) {
+    try {
+      return Optional.of((Class<T>) Class.forName(className));
+
     } catch (ClassNotFoundException classNotFoundException) {
       final var message = String.format("Exception thrown while searching class \"%s\".", className);
       log.warn(message, classNotFoundException);

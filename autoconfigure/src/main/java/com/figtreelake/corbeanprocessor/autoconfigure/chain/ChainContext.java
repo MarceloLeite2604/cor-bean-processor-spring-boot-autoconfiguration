@@ -6,8 +6,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,13 +18,13 @@ public class ChainContext<T extends ChainLink<T>> {
 
   private final List<String> beanNames;
 
-  private final Map<String, T> chainLinkBeansByName;
+  private Map<String, T> chainLinkBeansByName;
 
   private final List<ChainLinkBeanDefinitionContext<T>> beanDefinitionContexts;
 
   @SuppressWarnings("unchecked")
   public void addChainLinkBean(String name, Object bean) {
-    chainLinkBeansByName.put(name, (T) bean);
+    getChainLinkBeansByName().put(name, (T) bean);
   }
 
   public boolean hasAllChainLinks() {
@@ -33,7 +33,14 @@ public class ChainContext<T extends ChainLink<T>> {
 
   public List<T> getSortedChainLinks() {
     return beanNames.stream()
-        .map(chainLinkBeansByName::get)
+        .map(getChainLinkBeansByName()::get)
         .toList();
+  }
+
+  Map<String, T> getChainLinkBeansByName() {
+    if (chainLinkBeansByName == null) {
+      chainLinkBeansByName = new HashMap<>();
+    }
+    return chainLinkBeansByName;
   }
 }

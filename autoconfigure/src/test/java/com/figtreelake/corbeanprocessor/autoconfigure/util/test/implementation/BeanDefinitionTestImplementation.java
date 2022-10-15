@@ -10,8 +10,7 @@ import java.util.Map;
 
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@SuppressWarnings("java:S2187")
-public class BeanDefinitionForTests implements BeanDefinition {
+public class BeanDefinitionTestImplementation implements BeanDefinition {
 
   @Getter
   @Setter

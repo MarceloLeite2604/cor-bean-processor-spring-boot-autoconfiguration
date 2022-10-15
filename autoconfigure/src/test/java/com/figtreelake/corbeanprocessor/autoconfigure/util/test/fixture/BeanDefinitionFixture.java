@@ -1,6 +1,6 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.BeanDefinitionForTests;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.BeanDefinitionTestImplementation;
 import lombok.experimental.UtilityClass;
 import org.springframework.beans.factory.config.BeanDefinition;
 
@@ -30,7 +30,7 @@ public class BeanDefinitionFixture {
   }
 
   public static BeanDefinition create(boolean primary, String beanClassName) {
-    return BeanDefinitionForTests.builder()
+    return BeanDefinitionTestImplementation.builder()
         .primary(primary)
         .beanClassName(beanClassName)
         .build();
