@@ -14,17 +14,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
+
+
+  public static final Class<Float> CHAIN_LINK_ARGUMENT_CLASS = Float.class;
 
   @InjectMocks
   private ChainLinkBeanDefinitionRegistryPostProcessor<T> chainBeanDefinitionRegistryPostProcessor;
@@ -39,14 +44,12 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
   private ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
 
   @SuppressWarnings("unchecked")
+  public final Class<T> rootClass = (Class<T>) DummyAbstractChainLink.class;
+
   @Test
   void shouldCreateChainContexts() {
 
-    final var rootClass = (Class<T>) DummyAbstractChainLink.class;
-
-    final var chainLinkArgumentClass = Float.class;
-
-    final Set<ChainContext<T>> expectedChainContexts = createExpectedChainContexts(rootClass, chainLinkArgumentClass);
+    final Set<ChainContext<T>> expectedChainContexts = createExpectedChainContexts();
 
     final var mockedBeanDefinitionRegistry = mock(BeanDefinitionRegistry.class);
 
@@ -65,7 +68,7 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
         .thenReturn(BeanDefinitionFixture.create(BeanFixture.FOURTH_BEAN_CLASS));
 
     when(parameterizedTypesRetriever.retrieveForClass(any())).thenReturn(
-        Set.of(ParameterizedTypeContextFixture.createForChainLink(chainLinkArgumentClass)));
+        Set.of(ParameterizedTypeContextFixture.createForChainLink(CHAIN_LINK_ARGUMENT_CLASS)));
 
     chainBeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry(mockedBeanDefinitionRegistry);
 
@@ -74,12 +77,12 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
         .containsExactlyElementsOf(expectedChainContexts);
   }
 
-  private Set<ChainContext<T>> createExpectedChainContexts(Class<T> rootClass, Class<Float> chainLinkArgumentClass) {
-    
+  private Set<ChainContext<T>> createExpectedChainContexts() {
+
     final var beanDefinitionContexts = BeanFixture.createBeansMap(rootClass)
         .entrySet()
         .stream()
-        .map(entry -> ChainLinkBeanContextFixture.create(entry, ParameterizedTypeContextFixture.createForChainLink(chainLinkArgumentClass)))
+        .map(entry -> ChainLinkBeanContextFixture.create(entry, ParameterizedTypeContextFixture.createForChainLink(CHAIN_LINK_ARGUMENT_CLASS)))
         .toList();
 
     beanDefinitionContexts.get(0)
@@ -95,96 +98,85 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
     return Set.of(expectedChainContext);
   }
 
-//
-//  @SuppressWarnings({"rawtypes", "unchecked"})
-//  @Test
-//  void shouldUpdateFirstChainLinkBeanDefinitionOnRegistryAndFactory() {
-//
-//    final var mockedBeanDefinitionRegistry = mock(BeanDefinitionRegistry.class);
-//    final var mockedConfigurableListableBeanFactory = mock(ConfigurableListableBeanFactory.class);
-//
-//    final var dummyChainLinkABeanName = DummyChainLinkA.class.getSimpleName();
-//    final var dummyChainLinkBBeanName = DummyChainLinkB.class.getSimpleName();
-//    final var dummyChainLinkCBeanName = DummyChainLinkC.class.getSimpleName();
-//    final var dummyChainLinkDBeanName = DummyChainLinkD.class.getSimpleName();
-//
-//    final var dummyChainLinkA = new DummyChainLinkA();
-//    final var dummyChainLinkB = new DummyChainLinkB();
-//    final var dummyChainLinkC = new DummyChainLinkC();
-//    final var dummyChainLinkD = new DummyChainLinkD();
-//
-//    final var dummyChainLinkABeanDefinition = BeanDefinitionFixture.create();
-//    final var dummyChainLinkBBeanDefinition = BeanDefinitionFixture.create();
-//    final var dummyChainLinkCBeanDefinition = BeanDefinitionFixture.create();
-//    final var dummyChainLinkDBeanDefinition = BeanDefinitionFixture.create();
-//
-//    final var chainLinks = Set.of(dummyChainLinkA, dummyChainLinkB, dummyChainLinkC, dummyChainLinkD);
-//
-//    Map<String, ChainLink> chainLinksByName = Map.ofEntries(
-//        Map.entry(dummyChainLinkABeanName, dummyChainLinkA),
-//        Map.entry(dummyChainLinkBBeanName, dummyChainLinkB),
-//        Map.entry(dummyChainLinkCBeanName, dummyChainLinkC),
-//        Map.entry(dummyChainLinkDBeanName, dummyChainLinkD)
-//    );
-//
-//    final var parameterizedTypeContext = ParameterizedTypeContextFixture.createForChainLink(DummyAbstractChainLink.class);
-//
-//    when(mockedConfigurableListableBeanFactory.getBeansOfType(ChainLink.class)).thenReturn(chainLinksByName);
-//
-//    when(mockedBeanDefinitionRegistry.getBeanDefinition(dummyChainLinkABeanName))
-//        .thenReturn(dummyChainLinkABeanDefinition);
-//
-//    when(mockedBeanDefinitionRegistry.getBeanDefinition(dummyChainLinkBBeanName))
-//        .thenReturn(dummyChainLinkBBeanDefinition);
-//
-//    when(mockedBeanDefinitionRegistry.getBeanDefinition(dummyChainLinkCBeanName))
-//        .thenReturn(dummyChainLinkCBeanDefinition);
-//
-//    when(mockedBeanDefinitionRegistry.getBeanDefinition(dummyChainLinkDBeanName))
-//        .thenReturn(dummyChainLinkDBeanDefinition);
-//
-//    when(parameterizedTypesRetriever.retrieveForClass(any()))
-//        .thenReturn(Set.of(parameterizedTypeContext));
-//
-//
-//    when(chainAssembler.assemble(any())).thenAnswer(invocationOnMock -> {
-//      final var firstArgument = (Iterable<ChainLinkBeanDefinitionContext<DummyAbstractChainLink>>) invocationOnMock.getArgument(0);
-//      return firstArgument.iterator()
-//          .next();
-//    });
-//
-//    chainBeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry(mockedBeanDefinitionRegistry);
-//    chainBeanDefinitionRegistryPostProcessor.postProcessBeanFactory(mockedConfigurableListableBeanFactory);
-//
-//    final var removeBeanDefinitionBeanNameArgumentCaptor = ArgumentCaptor.forClass(String.class);
-//    verify(mockedBeanDefinitionRegistry, times(1)).removeBeanDefinition(removeBeanDefinitionBeanNameArgumentCaptor.capture());
-//
-//    final var registerBeanDefinitionBeanNameArgumentCaptor = ArgumentCaptor.forClass(String.class);
-//    final var beanDefinitionArgumentCaptor = ArgumentCaptor.forClass(BeanDefinition.class);
-//
-//    verify(mockedBeanDefinitionRegistry, times(1))
-//        .registerBeanDefinition(
-//            registerBeanDefinitionBeanNameArgumentCaptor.capture(),
-//            beanDefinitionArgumentCaptor.capture());
-//
-//    final var recordedBeanDefinition = beanDefinitionArgumentCaptor.getValue();
-//
-//    assertThat(registerBeanDefinitionBeanNameArgumentCaptor.getValue())
-//        .isEqualTo(removeBeanDefinitionBeanNameArgumentCaptor.getValue());
-//
-//    assertThat(recordedBeanDefinition.isPrimary()).isTrue();
-//
-//    final var registerSingletonBeanNameArgumentCaptor = ArgumentCaptor.forClass(String.class);
-//    final var beanArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-//    verify(mockedConfigurableListableBeanFactory, times(1)).registerSingleton(
-//        registerSingletonBeanNameArgumentCaptor.capture(),
-//        beanArgumentCaptor.capture()
-//    );
-//
-//    assertThat(registerSingletonBeanNameArgumentCaptor.getValue())
-//        .isEqualTo(removeBeanDefinitionBeanNameArgumentCaptor.getValue());
-//
-//    assertThat(beanArgumentCaptor.getValue()).isIn(chainLinks);
-//  }
+  @SuppressWarnings("unchecked")
+  @Test
+  void shouldReturnBeanAndNotInvokeChainAssembleWhenBeanIsNotInChainContext() {
 
+    final var mockedChainContexts = mock(Set.class);
+    final var mockedChainContext = mock(ChainContext.class);
+    final var beanName = "beanNameValue";
+    final var bean = "thisIsABean";
+
+    when(mockedChainContexts.stream()).thenReturn(Stream.of(mockedChainContext));
+
+    when(mockedChainContext.getBeanNames()).thenReturn(BeanFixture.BEAN_NAMES);
+
+    chainBeanDefinitionRegistryPostProcessor.setChainContexts(mockedChainContexts);
+
+    final var actualBean = chainBeanDefinitionRegistryPostProcessor.postProcessAfterInitialization(bean, beanName);
+
+    assertThat(actualBean).isEqualTo(bean);
+
+    verify(mockedChainContext, never()).hasAllChainLinks();
+    verify(chainAssembler, never()).assemble(any(ChainContext.class));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void shouldReturnChainLinkBeanAndAddItToChainContextAndNotInvokeChainAssembleWhenBeanIsChainLinkButChainIsNotComplete() {
+
+    final Class<T> rootClass = (Class<T>) DummyAbstractChainLink.class;
+    final var mockedChainContexts = mock(Set.class);
+    final var mockedChainContext = mock(ChainContext.class);
+    final var bean = BeanFixture.createFirstBean(rootClass);
+    final var beanName = BeanFixture.FIRST_BEAN_NAME;
+
+    when(mockedChainContexts.stream()).thenReturn(Stream.of(mockedChainContext));
+    when(mockedChainContext.hasAllChainLinks()).thenReturn(false);
+
+    when(mockedChainContext.getBeanNames()).thenReturn(BeanFixture.BEAN_NAMES);
+
+    chainBeanDefinitionRegistryPostProcessor.setChainContexts(mockedChainContexts);
+
+    final var actualBean = chainBeanDefinitionRegistryPostProcessor.postProcessAfterInitialization(bean, beanName);
+
+    assertThat(actualBean).isEqualTo(bean);
+
+    verify(mockedChainContext, times(1)).addChainLinkBean(beanName, bean);
+    verify(chainAssembler, never()).assemble(any(ChainContext.class));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  void shouldReturnChainLinkBeanAndAddItToChainContextAndInvokeChainAssembleWhenBeanIsChainLinkAndChainIsComplete() {
+
+    final Class<T> rootClass = (Class<T>) DummyAbstractChainLink.class;
+    final var mockedChainContexts = mock(Set.class);
+    final var mockedChainContext = mock(ChainContext.class);
+    final var bean = BeanFixture.createFourthBean(rootClass);
+    final var beanName = BeanFixture.FOURTH_BEAN_NAME;
+
+    when(mockedChainContexts.stream()).thenReturn(Stream.of(mockedChainContext));
+    when(mockedChainContext.hasAllChainLinks()).thenReturn(true);
+
+    when(mockedChainContext.getBeanNames()).thenReturn(BeanFixture.BEAN_NAMES);
+
+    chainBeanDefinitionRegistryPostProcessor.setChainContexts(mockedChainContexts);
+
+    final var actualBean = chainBeanDefinitionRegistryPostProcessor.postProcessAfterInitialization(bean, beanName);
+
+    assertThat(actualBean).isEqualTo(bean);
+
+    verify(mockedChainContext, times(1)).addChainLinkBean(beanName, bean);
+    verify(chainAssembler, times(1)).assemble(mockedChainContext);
+  }
+
+  @Test
+  void shouldInstantiateBeanDefinitionRegistryPostProcessorAndBeanPostProcessor() {
+    final var chainLinkBeanDefinitionRegistryPostProcessor = new ChainLinkBeanDefinitionRegistryPostProcessor<>();
+
+    assertThat(chainLinkBeanDefinitionRegistryPostProcessor).isInstanceOf(BeanDefinitionRegistryPostProcessor.class)
+        .isInstanceOf(BeanPostProcessor.class);
+
+  }
 }

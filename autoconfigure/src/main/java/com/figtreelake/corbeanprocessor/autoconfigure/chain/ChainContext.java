@@ -14,7 +14,6 @@ import java.util.Map;
 @Getter
 @Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@ToString
 public class ChainContext<T extends ChainLink<T>> {
 
   private final List<String> beanNames;

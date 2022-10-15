@@ -6,6 +6,7 @@ import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.Paramete
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -33,6 +34,7 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private final ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
 
+  @Setter(AccessLevel.PACKAGE)
   private Set<ChainContext<X>> chainContexts;
 
   /**
@@ -124,9 +126,7 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
   }
 
   @Override
-  public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-    /* Not used. */
-  }
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {/* Not used. */}
 
   @Override
   public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {

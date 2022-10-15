@@ -17,7 +17,6 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@ToString
 public class ParameterizedTypeContext {
 
   private final ParameterizedType parameterizedType;
