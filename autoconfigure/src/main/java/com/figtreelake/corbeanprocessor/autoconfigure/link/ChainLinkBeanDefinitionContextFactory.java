@@ -1,12 +1,12 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Optional;
@@ -19,6 +19,8 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
   private final BeanDefinitionRegistry beanDefinitionRegistry;
 
   private final ParameterizedTypesRetriever parameterizedTypesRetriever;
+
+  private final BeanDefinitionClassRetriever beanDefinitionClassRetriever;
 
   public Optional<ChainLinkBeanDefinitionContext<X>> create(String beanName) {
     return Optional.of(createContext(beanName))
@@ -35,90 +37,25 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
         .build();
   }
 
+  @SuppressWarnings("unchecked")
   private Optional<ChainLinkBeanDefinitionContext<X>> addBeanClass(ChainLinkBeanDefinitionContext<X> context) {
 
-    final var optionalBeanClass = retrieveBeanClass(context.getDefinition());
+    final var optionalBeanClass = beanDefinitionClassRetriever.retrieve(context.getDefinition());
     if (optionalBeanClass.isEmpty()) {
       return Optional.empty();
     }
 
-    final var beanClass = optionalBeanClass.get();
+    if (!ChainLink.class.isAssignableFrom(optionalBeanClass.get())) {
+      return Optional.empty();
+    }
+
+    final var beanClass = (Class<X>)optionalBeanClass.get();
 
     final var updatedContext = context.toBuilder()
         .beanClass(beanClass)
         .build();
 
     return Optional.of(updatedContext);
-  }
-
-  private Optional<Class<X>> retrieveBeanClass(BeanDefinition beanDefinition) {
-    var optionalBeanClassName = retrieveBeanClassName(beanDefinition);
-
-    if (optionalBeanClassName.isEmpty()) {
-      return Optional.empty();
-    }
-
-    final var className = optionalBeanClassName.get();
-
-    return retrieveClass(className);
-  }
-
-  private Optional<String> retrieveBeanClassName(BeanDefinition beanDefinition) {
-    final var optionalBeanClassName = Optional.ofNullable(beanDefinition.getBeanClassName());
-
-    if (optionalBeanClassName.isPresent()) {
-      return optionalBeanClassName;
-    }
-
-    return retrieveBeanClassThroughBeanFactory(beanDefinition);
-  }
-
-  private Optional<String> retrieveBeanClassThroughBeanFactory(BeanDefinition beanDefinition) {
-    final var factoryMethodName = beanDefinition.getFactoryMethodName();
-    if (factoryMethodName == null) {
-      return Optional.empty();
-    }
-
-    final var factoryBeanName = beanDefinition.getFactoryBeanName();
-    if (factoryBeanName == null) {
-      return Optional.empty();
-    }
-
-    final var factoryBeanDefinition = beanDefinitionRegistry.getBeanDefinition(factoryBeanName);
-
-    final var factoryBeanClassName = factoryBeanDefinition.getBeanClassName();
-
-    final var optionalFactoryBeanClass = retrieveClass(factoryBeanClassName);
-
-    if (optionalFactoryBeanClass.isEmpty()) {
-      return Optional.empty();
-    }
-
-    final var factoryBeanClass = optionalFactoryBeanClass.get();
-
-    try {
-      final var method = factoryBeanClass.getMethod(factoryMethodName);
-
-      return Optional.ofNullable(method.getGenericReturnType()
-          .getTypeName());
-
-    } catch (NoSuchMethodException noSuchMethodException) {
-      final var message = String.format("Exception thrown while searching for method \"%s\" on class \"%s\".", factoryMethodName, factoryBeanClassName);
-      log.warn(message, noSuchMethodException);
-      return Optional.empty();
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private <T> Optional<Class<T>> retrieveClass(String className) {
-    try {
-      return Optional.of((Class<T>) Class.forName(className));
-
-    } catch (ClassNotFoundException classNotFoundException) {
-      final var message = String.format("Exception thrown while searching class \"%s\".", className);
-      log.warn(message, classNotFoundException);
-      return Optional.empty();
-    }
   }
 
   private Optional<ChainLinkBeanDefinitionContext<X>> addChainLinkTypeContext(ChainLinkBeanDefinitionContext<X> context) {

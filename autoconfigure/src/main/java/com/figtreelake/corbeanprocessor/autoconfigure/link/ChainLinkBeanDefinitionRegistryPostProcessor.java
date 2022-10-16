@@ -1,5 +1,6 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainAssembler;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
@@ -85,9 +86,12 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private Map<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> createChainLinkBeansDefinitionsContextsByArgumentTypeMap(BeanDefinitionRegistry beanDefinitionRegistry) {
 
+    final var beanDefinitionClassRetriever = new BeanDefinitionClassRetriever(beanDefinitionRegistry);
+
     final var chainLinkBeanDefinitionContextFactory = ChainLinkBeanDefinitionContextFactory.<X>builder()
         .beanDefinitionRegistry(beanDefinitionRegistry)
         .parameterizedTypesRetriever(parameterizedTypesRetriever)
+        .beanDefinitionClassRetriever(beanDefinitionClassRetriever)
         .build();
 
     return Arrays.stream(beanDefinitionRegistry.getBeanDefinitionNames())

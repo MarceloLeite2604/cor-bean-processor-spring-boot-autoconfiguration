@@ -1,5 +1,6 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyAbstractChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanDefinitionFixture;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +34,9 @@ class ChainLinkBeanDefinitionContextFactoryTest {
   @Mock
   private ParameterizedTypesRetriever parameterizedTypesRetriever;
 
+  @Mock
+  private BeanDefinitionClassRetriever beanDefinitionClassRetriever;
+
   @Test
   void shouldCreateChainLinkBeanDefinitionContext() {
 
@@ -41,6 +46,7 @@ class ChainLinkBeanDefinitionContextFactoryTest {
 
     when(beanDefinitionRegistry.getBeanDefinition(any())).thenReturn(BeanDefinitionFixture.create(beanClass));
 
+    when(beanDefinitionClassRetriever.retrieve(any())).thenReturn(Optional.of(beanClass));
 
     when(parameterizedTypesRetriever.retrieveForClass(beanClass)).thenReturn(Set.of(ParameterizedTypeContextFixture.createForChainLink(beanClass)));
 
@@ -57,6 +63,8 @@ class ChainLinkBeanDefinitionContextFactoryTest {
 
     when(beanDefinitionRegistry.getBeanDefinition(any())).thenReturn(BeanDefinitionFixture.create((String)null));
 
+    when(beanDefinitionClassRetriever.retrieve(any())).thenReturn(Optional.empty());
+
     final var optionalChainLinkBeanDefinitionContext = chainLinkBeanDefinitionContextFactory.create(BeanFixture.FIRST_BEAN_NAME);
 
     assertThat(optionalChainLinkBeanDefinitionContext).isEmpty();
@@ -66,6 +74,8 @@ class ChainLinkBeanDefinitionContextFactoryTest {
   void shouldReturnOptionalEmptyWhenBeanIsNotInstanceOfChainLink() {
 
     when(beanDefinitionRegistry.getBeanDefinition(any())).thenReturn(BeanDefinitionFixture.create(String.class));
+
+    when(beanDefinitionClassRetriever.retrieve(any())).thenReturn(Optional.of(String.class));
 
     final var optionalChainLinkBeanDefinitionContext = chainLinkBeanDefinitionContextFactory.create(BeanFixture.FIRST_BEAN_NAME);
 
@@ -77,20 +87,21 @@ class ChainLinkBeanDefinitionContextFactoryTest {
 
     when(beanDefinitionRegistry.getBeanDefinition(any())).thenReturn(BeanDefinitionFixture.create("unknownBeanClassName"));
 
+    when(beanDefinitionClassRetriever.retrieve(any())).thenReturn(Optional.empty());
+
     final var optionalChainLinkBeanDefinitionContext = chainLinkBeanDefinitionContextFactory.create(BeanFixture.FIRST_BEAN_NAME);
 
     assertThat(optionalChainLinkBeanDefinitionContext).isEmpty();
   }
 
   @Test
-  void shouldReturnOptionalEmptyParameterizedTypeChainLinkIsNotFoundOnBeanClass() {
+  void shouldReturnOptionalEmptyWhenParameterizedTypeChainLinkIsNotFoundOnBeanClass() {
 
     final var beanClass = DummyAbstractChainLink.class;
 
-    final var expectedChainLinkBeanDefinitionContext = ChainLinkBeanDefinitionContextFixture.create(beanClass, BeanFixture.FIRST_BEAN_NAME);
-
     when(beanDefinitionRegistry.getBeanDefinition(any())).thenReturn(BeanDefinitionFixture.create(beanClass));
 
+    when(beanDefinitionClassRetriever.retrieve(any())).thenReturn(Optional.of(beanClass));
 
     when(parameterizedTypesRetriever.retrieveForClass(beanClass)).thenReturn(Collections.emptySet());
 
