@@ -11,7 +11,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Optional;
 
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {

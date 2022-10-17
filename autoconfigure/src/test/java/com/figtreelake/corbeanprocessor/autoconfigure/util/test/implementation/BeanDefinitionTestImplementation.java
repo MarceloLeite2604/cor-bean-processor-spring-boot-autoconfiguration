@@ -8,6 +8,7 @@ import org.springframework.core.ResolvableType;
 
 import java.util.Map;
 
+@ToString
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BeanDefinitionTestImplementation implements BeanDefinition {

@@ -5,6 +5,7 @@ import lombok.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+@ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class ParameterizedTypeTestImplementation implements ParameterizedType {

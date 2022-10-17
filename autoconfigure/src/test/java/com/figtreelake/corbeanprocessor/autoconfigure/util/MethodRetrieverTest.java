@@ -1,27 +1,23 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MethodRetrieverTest {
 
-  @Test
-  void shouldReturnSameMethodRetrieverInstance() {
-    final var methodRetriever = MethodRetriever.getInstance();
+  private MethodRetriever methodRetriever;
 
-    assertThat(methodRetriever).isInstanceOf(MethodRetriever.class);
-
-    final var anotherMethodRetriever = MethodRetriever.getInstance();
-
-    assertThat(anotherMethodRetriever).isEqualTo(methodRetriever);
+  @BeforeEach
+  void setUp() {
+    methodRetriever = new MethodRetriever();
   }
 
   @Test
   void shouldReturnOptionalWithMethod() {
     final var methodName = "retrieveValue";
-    final var optionalMethod = MethodRetriever.getInstance()
-        .retrieve(Dummy.class, methodName);
+    final var optionalMethod = methodRetriever.retrieve(Dummy.class, methodName);
 
     assertThat(optionalMethod).isPresent();
   }
@@ -29,8 +25,7 @@ class MethodRetrieverTest {
   @Test
   void shouldReturnOptionalEmptyWhenMethodIsNotFound() {
     final var methodName = "nonexistentMethod";
-    final var optionalMethod = MethodRetriever.getInstance()
-        .retrieve(Dummy.class, methodName);
+    final var optionalMethod = methodRetriever.retrieve(Dummy.class, methodName);
 
     assertThat(optionalMethod).isEmpty();
   }

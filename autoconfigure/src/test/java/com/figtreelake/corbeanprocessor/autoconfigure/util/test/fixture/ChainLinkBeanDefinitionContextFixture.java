@@ -15,19 +15,26 @@ public class ChainLinkBeanDefinitionContextFixture {
   }
 
   public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(Class<? extends T> beanClass, String name) {
+    return create(beanClass, name, ParameterizedTypeContextFixture.ARGUMENT_CLASS);
+  }
+
+  public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(Class<? extends T> beanClass, String name, Class<?> argumentClass) {
     final var beanDefinition = BeanDefinitionFixture.create(beanClass);
-    return create(beanClass, beanDefinition, name);
+    return create(beanClass, beanDefinition, name, argumentClass);
   }
 
   public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(Class<? extends T> beanClass, BeanDefinition beanDefinition) {
-    return create(beanClass, beanDefinition, NAME);
+    return create(beanClass, beanDefinition, NAME, ParameterizedTypeContextFixture.ARGUMENT_CLASS);
   }
 
   public static <T extends ChainLink<T>> ChainLinkBeanDefinitionContext<T> create(
       Class<? extends T> beanClass,
       BeanDefinition beanDefinition,
-      String name) {
-    final var chainLinkTypeContext = ParameterizedTypeContextFixture.createForChainLink(beanClass);
+      String name,
+      Class<?> argumentClass) {
+
+    final var chainLinkTypeContext = ParameterizedTypeContextFixture.createForChainLink(argumentClass);
+
     return ChainLinkBeanDefinitionContext.<T>builder()
         .definition(beanDefinition)
         .name(name)

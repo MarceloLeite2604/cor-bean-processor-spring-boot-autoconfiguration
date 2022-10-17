@@ -14,6 +14,7 @@ import java.util.Map;
  * Stores information about a generic type implemented by a class.
  * @author MarceloLeite2604
  */
+@ToString
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter

@@ -62,6 +62,26 @@ public class BeanFixture {
     return (T) FOURTH_BEAN;
   }
 
+  @SuppressWarnings({"unchecked", "unused"})
+  public static <T extends ChainLink<T>> Class<T> retrieveFirstBeanClass(Class<T> beanClass) {
+    return (Class<T>) FIRST_BEAN_CLASS;
+  }
+
+  @SuppressWarnings({"unchecked", "unused"})
+  public static <T extends ChainLink<T>> Class<T> retrieveSecondBeanClass(Class<T> beanClass) {
+    return (Class<T>) SECOND_BEAN_CLASS;
+  }
+
+  @SuppressWarnings({"unchecked", "unused"})
+  public static <T extends ChainLink<T>> Class<T> retrieveThirdBeanClass(Class<T> beanClass) {
+    return (Class<T>) THIRD_BEAN_CLASS;
+  }
+
+  @SuppressWarnings({"unchecked", "unused"})
+  public static <T extends ChainLink<T>> Class<T> retrieveFourthBeanClass(Class<T> beanClass) {
+    return (Class<T>) FOURTH_BEAN_CLASS;
+  }
+
   public static <T extends ChainLink<T>> Map<String, T> createBeansMap(Class<T> clazz) {
     final var input = Map.ofEntries(
         Map.entry(FIRST_BEAN_NAME, createFirstBean(clazz)),

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.beans.factory.config.BeanDefinition;
 
-
+@ToString
 @Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter

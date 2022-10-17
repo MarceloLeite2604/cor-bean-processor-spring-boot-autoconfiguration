@@ -5,6 +5,7 @@ import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.VehicleF
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.CorConfiguration;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.Vehicle;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.service.VehicleService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integrationTest")
 @Import(CorConfiguration.class)
 @SpringBootTest(classes = ChainConfiguration.class)
 class CorIT {

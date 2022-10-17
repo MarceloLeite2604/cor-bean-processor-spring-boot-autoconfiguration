@@ -1,15 +1,22 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@Builder(toBuilder = true)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BeanDefinitionClassRetriever {
 
   private final BeanDefinitionRegistry beanDefinitionRegistry;
+
+  private final ClassRetriever classRetriever;
+
+  private final MethodRetriever methodRetriever;
 
   public Optional<Class<?>> retrieve(BeanDefinition beanDefinition) {
     var optionalBeanClassName = retrieveBeanClassName(beanDefinition);
@@ -20,8 +27,7 @@ public class BeanDefinitionClassRetriever {
 
     final var className = optionalBeanClassName.get();
 
-    return ClassRetriever.getInstance()
-        .retrieve(className);
+    return classRetriever.retrieve(className);
   }
 
   private Optional<String> retrieveBeanClassName(BeanDefinition beanDefinition) {
@@ -49,8 +55,7 @@ public class BeanDefinitionClassRetriever {
 
     final var factoryBeanClassName = factoryBeanDefinition.getBeanClassName();
 
-    final var optionalFactoryBeanClass = ClassRetriever.getInstance()
-        .retrieve(factoryBeanClassName);
+    final var optionalFactoryBeanClass = classRetriever.retrieve(factoryBeanClassName);
 
     if (optionalFactoryBeanClass.isEmpty()) {
       return Optional.empty();
@@ -58,8 +63,7 @@ public class BeanDefinitionClassRetriever {
 
     final var factoryBeanClass = optionalFactoryBeanClass.get();
 
-    final var optionalMethod = MethodRetriever.getInstance()
-        .retrieve(factoryBeanClass, factoryMethodName);
+    final var optionalMethod = methodRetriever.retrieve(factoryBeanClass, factoryMethodName);
     if (optionalMethod.isEmpty()) {
       return Optional.empty();
     }
@@ -68,7 +72,5 @@ public class BeanDefinitionClassRetriever {
 
     return Optional.ofNullable(method.getGenericReturnType()
         .getTypeName());
-
   }
-
 }

@@ -5,6 +5,8 @@ import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainAssembler;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.ClassRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.MethodRetriever;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -35,6 +37,11 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private final ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
 
+  private final BeanDefinitionClassRetriever beanDefinitionClassRetrieverTemplate;
+
+  private final ChainLinkBeanDefinitionContextFactory<X> chainLinkBeanDefinitionContextFactoryTemplate;
+
+
   @Setter(AccessLevel.PACKAGE)
   private Set<ChainContext<X>> chainContexts;
 
@@ -45,6 +52,15 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
     parameterizedTypesRetriever = new ParameterizedTypesRetriever();
     chainAssembler = new ChainAssembler();
     chainLinkBeanDefinitionContextComparator = new ChainLinkBeanDefinitionContextComparator();
+
+    beanDefinitionClassRetrieverTemplate = BeanDefinitionClassRetriever.builder()
+        .classRetriever(new ClassRetriever())
+        .methodRetriever(new MethodRetriever())
+        .build();
+
+    chainLinkBeanDefinitionContextFactoryTemplate = ChainLinkBeanDefinitionContextFactory.<X>builder()
+        .parameterizedTypesRetriever(parameterizedTypesRetriever)
+        .build();
   }
 
   @Override
@@ -86,11 +102,12 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private Map<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> createChainLinkBeansDefinitionsContextsByArgumentTypeMap(BeanDefinitionRegistry beanDefinitionRegistry) {
 
-    final var beanDefinitionClassRetriever = new BeanDefinitionClassRetriever(beanDefinitionRegistry);
-
-    final var chainLinkBeanDefinitionContextFactory = ChainLinkBeanDefinitionContextFactory.<X>builder()
+    final var beanDefinitionClassRetriever = beanDefinitionClassRetrieverTemplate.toBuilder()
         .beanDefinitionRegistry(beanDefinitionRegistry)
-        .parameterizedTypesRetriever(parameterizedTypesRetriever)
+        .build();
+
+    final var chainLinkBeanDefinitionContextFactory = chainLinkBeanDefinitionContextFactoryTemplate.toBuilder()
+        .beanDefinitionRegistry(beanDefinitionRegistry)
         .beanDefinitionClassRetriever(beanDefinitionClassRetriever)
         .build();
 
@@ -138,7 +155,8 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
         .filter(chainContext ->
             chainContext.getBeanNames()
                 .contains(beanName)
-        ).findFirst();
+        )
+        .findFirst();
 
     if (optionalChainContext.isEmpty()) {
       return bean;

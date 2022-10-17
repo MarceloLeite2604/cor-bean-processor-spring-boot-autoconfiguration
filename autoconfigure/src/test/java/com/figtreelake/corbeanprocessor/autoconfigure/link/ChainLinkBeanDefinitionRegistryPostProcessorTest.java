@@ -3,11 +3,12 @@ package com.figtreelake.corbeanprocessor.autoconfigure.link;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainAssembler;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyAbstractChainLink;
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanDefinitionFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ChainContextFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ChainLinkBeanContextFixture;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ChainLinkBeanDefinitionContextFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ParameterizedTypeContextFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -43,8 +45,14 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
   @Mock
   private ChainLinkBeanDefinitionContextComparator chainLinkBeanDefinitionContextComparator;
 
+  @Mock
+  private BeanDefinitionClassRetriever beanDefinitionClassRetriever;
+
+  @Mock
+  private ChainLinkBeanDefinitionContextFactory<T> chainLinkBeanDefinitionContextFactory;
+
   @SuppressWarnings("unchecked")
-  public final Class<T> rootClass = (Class<T>) DummyAbstractChainLink.class;
+  private final Class<T> rootClass = (Class<T>) DummyAbstractChainLink.class;
 
   @Test
   void shouldCreateChainContexts() {
@@ -53,28 +61,65 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
 
     final var mockedBeanDefinitionRegistry = mock(BeanDefinitionRegistry.class);
 
+    final var mockedBeanDefinitionClassRetrieverBuilder = createMockedBeanDefinitionClassRetrieverBuilder();
+    when(beanDefinitionClassRetriever.toBuilder()).thenReturn(mockedBeanDefinitionClassRetrieverBuilder);
+
+    final var mockedChainLinkBeanDefinitionContextFactoryBuilder = createMockedChainLinkBeanDefinitionContextFactoryBuilder();
+    when(chainLinkBeanDefinitionContextFactory.toBuilder()).thenReturn(mockedChainLinkBeanDefinitionContextFactoryBuilder);
+
+    final var optionalFirstChainLinkBeanDefinitionContext = Optional.of(ChainLinkBeanDefinitionContextFixture
+        .create(
+            BeanFixture.retrieveFirstBeanClass(rootClass),
+            BeanFixture.FIRST_BEAN_NAME,
+            CHAIN_LINK_ARGUMENT_CLASS));
+
+    final var optionalSecondChainLinkBeanDefinitionContext = Optional.of(ChainLinkBeanDefinitionContextFixture
+        .create(
+            BeanFixture.retrieveSecondBeanClass(rootClass),
+            BeanFixture.SECOND_BEAN_NAME,
+            CHAIN_LINK_ARGUMENT_CLASS));
+
+    final var optionalThirdChainLinkBeanDefinitionContext = Optional.of(ChainLinkBeanDefinitionContextFixture
+        .create(
+            BeanFixture.retrieveThirdBeanClass(rootClass),
+            BeanFixture.THIRD_BEAN_NAME,
+            CHAIN_LINK_ARGUMENT_CLASS));
+
+    final var optionalFourthChainLinkBeanDefinitionContext = Optional.of(ChainLinkBeanDefinitionContextFixture
+        .create(
+            BeanFixture.retrieveFourthBeanClass(rootClass),
+            BeanFixture.FOURTH_BEAN_NAME,
+            CHAIN_LINK_ARGUMENT_CLASS));
+
+    when(chainLinkBeanDefinitionContextFactory.create(any()))
+        .thenReturn(optionalFirstChainLinkBeanDefinitionContext)
+        .thenReturn(optionalSecondChainLinkBeanDefinitionContext)
+        .thenReturn(optionalThirdChainLinkBeanDefinitionContext)
+        .thenReturn(optionalFourthChainLinkBeanDefinitionContext);
+
     when(mockedBeanDefinitionRegistry.getBeanDefinitionNames()).thenReturn(BeanFixture.BEAN_NAMES_ARRAY);
-
-    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.FIRST_BEAN_NAME))
-        .thenReturn(BeanDefinitionFixture.create(BeanFixture.FIRST_BEAN_CLASS));
-
-    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.SECOND_BEAN_NAME))
-        .thenReturn(BeanDefinitionFixture.create(BeanFixture.SECOND_BEAN_CLASS));
-
-    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.THIRD_BEAN_NAME))
-        .thenReturn(BeanDefinitionFixture.create(BeanFixture.THIRD_BEAN_CLASS));
-
-    when(mockedBeanDefinitionRegistry.getBeanDefinition(BeanFixture.FOURTH_BEAN_NAME))
-        .thenReturn(BeanDefinitionFixture.create(BeanFixture.FOURTH_BEAN_CLASS));
-
-    when(parameterizedTypesRetriever.retrieveForClass(any())).thenReturn(
-        Set.of(ParameterizedTypeContextFixture.createForChainLink(CHAIN_LINK_ARGUMENT_CLASS)));
 
     chainBeanDefinitionRegistryPostProcessor.postProcessBeanDefinitionRegistry(mockedBeanDefinitionRegistry);
 
     assertThat(chainBeanDefinitionRegistryPostProcessor.getChainContexts(rootClass))
         .usingRecursiveFieldByFieldElementComparator()
         .containsExactlyElementsOf(expectedChainContexts);
+  }
+
+  @SuppressWarnings("unchecked")
+  private ChainLinkBeanDefinitionContextFactory.ChainLinkBeanDefinitionContextFactoryBuilder<T> createMockedChainLinkBeanDefinitionContextFactoryBuilder() {
+    final var builder = mock(ChainLinkBeanDefinitionContextFactory.ChainLinkBeanDefinitionContextFactoryBuilder.class);
+    when(builder.beanDefinitionRegistry(any())).thenReturn(builder);
+    when(builder.beanDefinitionClassRetriever(any())).thenReturn(builder);
+    when(builder.build()).thenReturn(chainLinkBeanDefinitionContextFactory);
+    return builder;
+  }
+
+  private BeanDefinitionClassRetriever.BeanDefinitionClassRetrieverBuilder createMockedBeanDefinitionClassRetrieverBuilder() {
+    final var builder = mock(BeanDefinitionClassRetriever.BeanDefinitionClassRetrieverBuilder.class);
+    when(builder.beanDefinitionRegistry(any())).thenReturn(builder);
+    when(builder.build()).thenReturn(beanDefinitionClassRetriever);
+    return builder;
   }
 
   private Set<ChainContext<T>> createExpectedChainContexts() {
@@ -177,6 +222,5 @@ class ChainLinkBeanDefinitionRegistryPostProcessorTest<T extends ChainLink<T>> {
 
     assertThat(chainLinkBeanDefinitionRegistryPostProcessor).isInstanceOf(BeanDefinitionRegistryPostProcessor.class)
         .isInstanceOf(BeanPostProcessor.class);
-
   }
 }
