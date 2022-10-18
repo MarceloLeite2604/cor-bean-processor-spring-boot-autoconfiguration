@@ -1,6 +1,10 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

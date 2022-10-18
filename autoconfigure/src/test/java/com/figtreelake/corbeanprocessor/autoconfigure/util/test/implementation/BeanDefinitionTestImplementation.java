@@ -1,6 +1,10 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -8,7 +12,6 @@ import org.springframework.core.ResolvableType;
 
 import java.util.Map;
 
-@ToString
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BeanDefinitionTestImplementation implements BeanDefinition {

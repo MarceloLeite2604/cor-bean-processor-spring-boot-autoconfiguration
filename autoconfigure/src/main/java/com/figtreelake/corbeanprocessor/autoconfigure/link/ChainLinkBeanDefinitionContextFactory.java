@@ -1,8 +1,8 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

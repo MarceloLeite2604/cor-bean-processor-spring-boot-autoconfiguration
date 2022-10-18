@@ -1,9 +1,9 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyAbstractChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyHighPrecedenceOrderChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyLowPrecedenceOrderChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyLowestPrecedenceOrderChainLink;
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyAbstractChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanDefinitionFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.ChainLinkBeanDefinitionContextFixture;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,10 +1,10 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainAssembler;
 import com.figtreelake.corbeanprocessor.autoconfigure.chain.ChainContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypeContext;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.ClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.MethodRetriever;
 import lombok.AccessLevel;

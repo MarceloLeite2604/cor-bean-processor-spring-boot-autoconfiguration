@@ -58,4 +58,16 @@ class ChainContextTest {
     assertThat(sortedChainLinks).containsExactlyElementsOf(expectedSortedChainLinks);
   }
 
+  @Test
+  void shouldInstantiateChainLinkBeansByNameWhenFieldIsNull() {
+    final var chainContext = ChainContextFixture.create(DummyAbstractChainLink.class)
+        .toBuilder()
+        .chainLinkBeansByName(null)
+        .build();
+
+    final var chainLinkBeansByName = chainContext.getChainLinkBeansByName();
+
+    assertThat(chainLinkBeansByName).isNotNull();
+  }
+
 }

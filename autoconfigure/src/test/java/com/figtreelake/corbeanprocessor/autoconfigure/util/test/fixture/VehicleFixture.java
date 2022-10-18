@@ -1,6 +1,10 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.*;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.Boat;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.Car;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.Plane;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.Vehicle;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.test.implementation.vehicle.VehicleType;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

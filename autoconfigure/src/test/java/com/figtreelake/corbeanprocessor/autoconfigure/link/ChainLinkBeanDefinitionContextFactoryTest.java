@@ -1,7 +1,7 @@
 package com.figtreelake.corbeanprocessor.autoconfigure.link;
 
-import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.parameterizedtype.ParameterizedTypesRetriever;
+import com.figtreelake.corbeanprocessor.autoconfigure.util.BeanDefinitionClassRetriever;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.dummy.link.DummyAbstractChainLink;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanDefinitionFixture;
 import com.figtreelake.corbeanprocessor.autoconfigure.util.test.fixture.BeanFixture;
@@ -48,7 +48,7 @@ class ChainLinkBeanDefinitionContextFactoryTest {
 
     when(beanDefinitionClassRetriever.retrieve(any())).thenReturn(Optional.of(beanClass));
 
-    when(parameterizedTypesRetriever.retrieveForClass(beanClass)).thenReturn(Set.of(ParameterizedTypeContextFixture.createForChainLink(beanClass)));
+    when(parameterizedTypesRetriever.retrieveForClass(beanClass)).thenReturn(Set.of(ParameterizedTypeContextFixture.createForChainLink()));
 
     final var optionalChainLinkBeanDefinitionContext = chainLinkBeanDefinitionContextFactory.create(BeanFixture.FIRST_BEAN_NAME);
 
