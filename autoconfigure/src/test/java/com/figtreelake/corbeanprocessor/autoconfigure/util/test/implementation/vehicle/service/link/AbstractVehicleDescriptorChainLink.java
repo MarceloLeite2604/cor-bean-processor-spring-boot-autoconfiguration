@@ -51,7 +51,7 @@ public abstract class AbstractVehicleDescriptorChainLink<T extends Vehicle> impl
     stringBuilder.append(vehicle.getName());
     stringBuilder.append("\" that can reach up to ");
     stringBuilder.append(vehicle.getMaxSpeedKph());
-    stringBuilder.append("km/h of speed ");
+    stringBuilder.append("km/h of speed");
 
     stringBuilder.append(describeDetails(vehicleClass.cast(vehicle)));
 
