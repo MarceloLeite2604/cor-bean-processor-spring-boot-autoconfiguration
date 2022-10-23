@@ -50,7 +50,7 @@ class ChainAssemblerTest {
 
     chainAssembler.assemble(chainContext);
 
-    final var linkIterator = chainContext.getSortedChainLinks().iterator();
+    final var linkIterator = chainContext.retrieveChainLinks().iterator();
 
     final var firstLink = linkIterator.next();
     assertThat(firstLink).isNotNull();

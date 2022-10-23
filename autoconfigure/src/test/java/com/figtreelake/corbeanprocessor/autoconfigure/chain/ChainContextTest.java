@@ -53,7 +53,7 @@ class ChainContextTest {
 
     final var expectedSortedChainLinks = BeanFixture.createBeans(DummyAbstractChainLink.class);
 
-    final var sortedChainLinks = chainContext.getSortedChainLinks();
+    final var sortedChainLinks = chainContext.retrieveChainLinks();
 
     assertThat(sortedChainLinks).containsExactlyElementsOf(expectedSortedChainLinks);
   }

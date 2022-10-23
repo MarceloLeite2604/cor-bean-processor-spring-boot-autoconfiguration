@@ -9,6 +9,11 @@ import org.springframework.util.Assert;
  */
 public class ChainAssembler {
 
+  /**
+   * Assemble links to create a chain.
+   * @param chainLinks Chain links to be concatenated.
+   * @param <T> Element that either implements or extends the {@link ChainLink} interface.
+   */
   public <T extends ChainLink<T>> void assemble(Iterable<T> chainLinks) {
     Assert.notNull(chainLinks, "Chain links iterable cannot be null.");
 
@@ -21,8 +26,13 @@ public class ChainAssembler {
     }
   }
 
-  public <X extends ChainLink<X>> void assemble(ChainContext<X> chainContext) {
+  /**
+   * Assemble links to create a chain.
+   * @param chainContext The context of the chain to be assembled.
+   * @param <T> Element that either implements or extends the {@link ChainLink} interface.
+   */
+  public <T extends ChainLink<T>> void assemble(ChainContext<T> chainContext) {
     Assert.notNull(chainContext, "Chain context cannot be null.");
-    assemble(chainContext.getSortedChainLinks());
+    assemble(chainContext.retrieveChainLinks());
   }
 }

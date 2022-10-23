@@ -5,7 +5,7 @@ package com.figtreelake.corbeanprocessor.autoconfigure.link;
  * together to create a chain of responsibility. Different types informed on
  * parameter "T" means different chains implementation and will be concatenated
  * separately.
- * @param <T> An auto-reference type got the class/interface that implements
+ * @param <T> An auto-reference type got the class/interface that implements/extends
  *           this interface.
  */
 public interface ChainLink<T extends ChainLink<T>> {
