@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 /**
  * A Spring context configuration class to create all beans required to
  * implement chain of responsibility automatically.
+ *
+ * @author MarceloLeite2604
  */
 @SuppressWarnings("java:S1118")
 @Configuration

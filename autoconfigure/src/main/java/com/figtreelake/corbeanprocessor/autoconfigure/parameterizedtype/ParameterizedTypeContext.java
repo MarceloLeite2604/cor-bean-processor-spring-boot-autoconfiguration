@@ -10,7 +10,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 
 /**
- * Stores information about a generic type implemented by a class.
+ * Store information about a generic type implemented by a class.
+ *
  * @author MarceloLeite2604
  */
 @Builder

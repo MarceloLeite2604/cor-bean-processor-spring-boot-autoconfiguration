@@ -15,6 +15,7 @@ import java.util.Map;
  * Store all information related to a chain of responsibility.
  *
  * @param <T> Element that either implements or extends the {@link ChainLink} interface.
+ * @author MarceloLeite2604
  */
 @Getter
 @Builder(toBuilder = true)

@@ -26,10 +26,20 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+/**
+ * A {@link BeanDefinitionRegistryPostProcessor} which maps all beans that
+ * extends/implements {@link ChainLink} interface and splitting them according
+ * to their contexts. It also implements {@link BeanDefinitionRegistryPostProcessor}
+ * to retrieve all bean implementations and create each chain of responsibility
+ * according to its context.
+ *
+ * @param <T> Element that either implements or extends the {@link ChainLink}
+ *            interface.
+ * @author MarceloLeite2604
+ */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>> implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
+public class ChainLinkBeanDefinitionRegistryPostProcessor<T extends ChainLink<T>> implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
 
   private final ParameterizedTypesRetriever parameterizedTypesRetriever;
 
@@ -39,11 +49,11 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
 
   private final BeanDefinitionClassRetriever beanDefinitionClassRetrieverTemplate;
 
-  private final ChainLinkBeanDefinitionContextFactory<X> chainLinkBeanDefinitionContextFactoryTemplate;
+  private final ChainLinkBeanDefinitionContextFactory<T> chainLinkBeanDefinitionContextFactoryTemplate;
 
 
   @Setter(AccessLevel.PACKAGE)
-  private Set<ChainContext<X>> chainContexts;
+  private Set<ChainContext<T>> chainContexts;
 
   /**
    * Instantiates an object of type {@link ChainLinkBeanDefinitionRegistryPostProcessor}.
@@ -58,7 +68,7 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
         .methodRetriever(new MethodRetriever())
         .build();
 
-    chainLinkBeanDefinitionContextFactoryTemplate = ChainLinkBeanDefinitionContextFactory.<X>builder()
+    chainLinkBeanDefinitionContextFactoryTemplate = ChainLinkBeanDefinitionContextFactory.<T>builder()
         .parameterizedTypesRetriever(parameterizedTypesRetriever)
         .build();
   }
@@ -69,7 +79,7 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
     chainContexts = createChainContexts(chainLinkBeansDefinitionsContextsByArgumentType);
   }
 
-  private Set<ChainContext<X>> createChainContexts(Map<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> chainLinkBeansDefinitionsContextsByArgumentType) {
+  private Set<ChainContext<T>> createChainContexts(Map<Class<?>, List<ChainLinkBeanDefinitionContext<T>>> chainLinkBeansDefinitionsContextsByArgumentType) {
     return chainLinkBeansDefinitionsContextsByArgumentType.values()
         .stream()
         .map(this::sortChainLinkBeansDefinitionsContexts)
@@ -78,29 +88,29 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
         .collect(Collectors.toSet());
   }
 
-  private List<ChainLinkBeanDefinitionContext<X>> updateFirstLinkBeanDefinition(List<ChainLinkBeanDefinitionContext<X>> chainLinkBeanDefinitionContexts) {
+  private List<ChainLinkBeanDefinitionContext<T>> updateFirstLinkBeanDefinition(List<ChainLinkBeanDefinitionContext<T>> chainLinkBeanDefinitionContexts) {
     updateBeanDefinition(chainLinkBeanDefinitionContexts.get(0));
     return chainLinkBeanDefinitionContexts;
   }
 
-  private ChainContext<X> createChainContext(List<ChainLinkBeanDefinitionContext<X>> contexts) {
+  private ChainContext<T> createChainContext(List<ChainLinkBeanDefinitionContext<T>> contexts) {
 
     final var beanNames = contexts.stream()
         .map(ChainLinkBeanDefinitionContext::getName)
         .toList();
 
-    return ChainContext.<X>builder()
+    return ChainContext.<T>builder()
         .beanDefinitionContexts(contexts)
         .beanNames(beanNames)
         .build();
   }
 
-  private void updateBeanDefinition(ChainLinkBeanDefinitionContext<X> chainLinkBeanDefinitionContext) {
+  private void updateBeanDefinition(ChainLinkBeanDefinitionContext<T> chainLinkBeanDefinitionContext) {
     chainLinkBeanDefinitionContext.getDefinition()
         .setPrimary(true);
   }
 
-  private Map<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> createChainLinkBeansDefinitionsContextsByArgumentTypeMap(BeanDefinitionRegistry beanDefinitionRegistry) {
+  private Map<Class<?>, List<ChainLinkBeanDefinitionContext<T>>> createChainLinkBeansDefinitionsContextsByArgumentTypeMap(BeanDefinitionRegistry beanDefinitionRegistry) {
 
     final var beanDefinitionClassRetriever = beanDefinitionClassRetrieverTemplate.toBuilder()
         .beanDefinitionRegistry(beanDefinitionRegistry)
@@ -128,12 +138,12 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
   }
 
 
-  private Map.Entry<Class<?>, List<ChainLinkBeanDefinitionContext<X>>> createChainLinkContextByArgumentMapEntry(ChainLinkBeanDefinitionContext<X> context) {
+  private Map.Entry<Class<?>, List<ChainLinkBeanDefinitionContext<T>>> createChainLinkContextByArgumentMapEntry(ChainLinkBeanDefinitionContext<T> context) {
     final var key = retrieveChainLinkArgumentClass(context.getChainLinkTypeContext());
     return Map.entry(key, new ArrayList<>(List.of(context)));
   }
 
-  private List<ChainLinkBeanDefinitionContext<X>> sortChainLinkBeansDefinitionsContexts(List<ChainLinkBeanDefinitionContext<X>> chainLinkBeansDefinitionsContexts) {
+  private List<ChainLinkBeanDefinitionContext<T>> sortChainLinkBeansDefinitionsContexts(List<ChainLinkBeanDefinitionContext<T>> chainLinkBeansDefinitionsContexts) {
     chainLinkBeansDefinitionsContexts.sort(chainLinkBeanDefinitionContextComparator);
     return chainLinkBeansDefinitionsContexts;
   }
@@ -173,7 +183,7 @@ public class ChainLinkBeanDefinitionRegistryPostProcessor<X extends ChainLink<X>
   }
 
   @SuppressWarnings({"unused", "java:S1905", "RedundantCast"})
-  Set<ChainContext<X>> getChainContexts(Class<X> clazz) {
-    return (Set<ChainContext<X>>) chainContexts;
+  Set<ChainContext<T>> getChainContexts(Class<T> clazz) {
+    return (Set<ChainContext<T>>) chainContexts;
   }
 }

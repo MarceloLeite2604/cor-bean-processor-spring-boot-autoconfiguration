@@ -7,6 +7,7 @@ import java.util.Optional;
 
 /**
  * Retrieve class methods details as {@link Method} object.
+ *
  * @author MarceloLeite2604
  */
 @Slf4j

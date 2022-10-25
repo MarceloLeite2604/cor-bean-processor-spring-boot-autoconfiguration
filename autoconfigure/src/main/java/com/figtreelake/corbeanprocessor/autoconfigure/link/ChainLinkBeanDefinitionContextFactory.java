@@ -11,10 +11,17 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Optional;
 
+/**
+ * Factory to create {@link ChainLinkBeanDefinitionContext} objects.
+ *
+ * @param <T> Element that either implements or extends the {@link ChainLink}
+ *            interface.
+ * @author MarceloLeite2604
+ */
 @Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
+public class ChainLinkBeanDefinitionContextFactory<T extends ChainLink<T>> {
 
   private final BeanDefinitionRegistry beanDefinitionRegistry;
 
@@ -22,23 +29,30 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
 
   private final BeanDefinitionClassRetriever beanDefinitionClassRetriever;
 
-  public Optional<ChainLinkBeanDefinitionContext<X>> create(String beanName) {
+  /**
+   * Create a {@link ChainLinkBeanDefinitionContext}
+   *
+   * @param beanName The bean name to be retrieved through {@link BeanDefinitionRegistry}
+   * @return An {@link Optional} containing the {@link ChainLinkBeanDefinitionContext}
+   * created of empty if it was not possible to create the object.
+   */
+  public Optional<ChainLinkBeanDefinitionContext<T>> create(String beanName) {
     return Optional.of(createContext(beanName))
         .flatMap(this::addBeanClass)
         .flatMap(this::addChainLinkTypeContext);
   }
 
-  private ChainLinkBeanDefinitionContext<X> createContext(String beanName) {
+  private ChainLinkBeanDefinitionContext<T> createContext(String beanName) {
     final var beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
 
-    return ChainLinkBeanDefinitionContext.<X>builder()
+    return ChainLinkBeanDefinitionContext.<T>builder()
         .name(beanName)
         .definition(beanDefinition)
         .build();
   }
 
   @SuppressWarnings("unchecked")
-  private Optional<ChainLinkBeanDefinitionContext<X>> addBeanClass(ChainLinkBeanDefinitionContext<X> context) {
+  private Optional<ChainLinkBeanDefinitionContext<T>> addBeanClass(ChainLinkBeanDefinitionContext<T> context) {
 
     final var optionalBeanClass = beanDefinitionClassRetriever.retrieve(context.getDefinition());
     if (optionalBeanClass.isEmpty()) {
@@ -49,7 +63,7 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
       return Optional.empty();
     }
 
-    final var beanClass = (Class<X>)optionalBeanClass.get();
+    final var beanClass = (Class<T>) optionalBeanClass.get();
 
     final var updatedContext = context.toBuilder()
         .beanClass(beanClass)
@@ -58,7 +72,7 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
     return Optional.of(updatedContext);
   }
 
-  private Optional<ChainLinkBeanDefinitionContext<X>> addChainLinkTypeContext(ChainLinkBeanDefinitionContext<X> context) {
+  private Optional<ChainLinkBeanDefinitionContext<T>> addChainLinkTypeContext(ChainLinkBeanDefinitionContext<T> context) {
 
     final var optionalChainLinkTypeContext = retrieveChainLinkTypeContext(context);
     if (optionalChainLinkTypeContext.isEmpty()) {
@@ -74,7 +88,7 @@ public class ChainLinkBeanDefinitionContextFactory<X extends ChainLink<X>> {
     return Optional.of(updatedContext);
   }
 
-  private Optional<ParameterizedTypeContext> retrieveChainLinkTypeContext(ChainLinkBeanDefinitionContext<X> context) {
+  private Optional<ParameterizedTypeContext> retrieveChainLinkTypeContext(ChainLinkBeanDefinitionContext<T> context) {
     return parameterizedTypesRetriever.retrieveForClass(context.getBeanClass())
         .stream()
         .filter(parameterizedTypeContext -> {

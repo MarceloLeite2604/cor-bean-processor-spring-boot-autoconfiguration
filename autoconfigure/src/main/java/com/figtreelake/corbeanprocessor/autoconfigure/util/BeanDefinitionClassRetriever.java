@@ -8,6 +8,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Optional;
 
+/**
+ * Retrieves the bean class specified on a {@link BeanDefinition}.
+ *
+ * @author MarceloLeite2604
+ */
 @Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BeanDefinitionClassRetriever {
@@ -18,6 +23,13 @@ public class BeanDefinitionClassRetriever {
 
   private final MethodRetriever methodRetriever;
 
+  /**
+   * Retrieve a bean class based on its definition
+   *
+   * @param beanDefinition The bean definition.
+   * @return An {@link Optional} either containing the bean class or empty if
+   * the bean class was not found.
+   */
   public Optional<Class<?>> retrieve(BeanDefinition beanDefinition) {
     var optionalBeanClassName = retrieveBeanClassName(beanDefinition);
 

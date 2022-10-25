@@ -6,7 +6,14 @@ import org.springframework.core.annotation.Order;
 import java.util.Comparator;
 import java.util.Optional;
 
-public class ChainLinkBeanDefinitionContextComparator implements Comparator<ChainLinkBeanDefinitionContext<?>> {
+/**
+ * A {@link Comparator} for {@link ChainLinkBeanDefinitionContext} elements.
+ *
+ * @author MarceloLeite2604
+ */
+public class ChainLinkBeanDefinitionContextComparator
+    implements Comparator<ChainLinkBeanDefinitionContext<?>> {
+
   @Override
   public int compare(ChainLinkBeanDefinitionContext firstContext, ChainLinkBeanDefinitionContext secondContext) {
     if (firstContext.getDefinition()

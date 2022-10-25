@@ -27,6 +27,7 @@ public class ParameterizedTypesRetriever {
    * Retrieve the parameterized type context of all generic interfaces
    * implemented by such class, its superclasses and interfaces
    * implemented by them.
+   *
    * @param rootClass Root class to retrieve all parameterized context.
    * @return The context of all parameterized classes implemented.
    */
