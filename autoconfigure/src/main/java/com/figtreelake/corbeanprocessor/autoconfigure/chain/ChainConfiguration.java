@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(
     name = "cor-bean-processor.enabled",
-    value = "true",
+    havingValue = "true",
     matchIfMissing = true)
 public class ChainConfiguration {
 

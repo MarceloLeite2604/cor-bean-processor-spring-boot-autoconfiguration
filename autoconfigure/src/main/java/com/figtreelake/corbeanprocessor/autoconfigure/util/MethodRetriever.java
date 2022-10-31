@@ -3,6 +3,7 @@ package com.figtreelake.corbeanprocessor.autoconfigure.util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -22,12 +23,14 @@ public class MethodRetriever {
    * was not found.
    */
   public Optional<Method> retrieve(Class<?> clazz, String methodName) {
-    try {
-      return Optional.of(clazz.getMethod(methodName));
-    } catch (NoSuchMethodException noSuchMethodException) {
-      final var message = String.format("Exception thrown while searching for method \"%s\" on class \"%s\".", methodName, clazz);
-      log.debug(message, noSuchMethodException);
-      return Optional.empty();
+    final var optionalMethod = Arrays.stream(clazz.getMethods())
+        .filter(method -> methodName.equals(method.getName()))
+        .findFirst();
+
+    if (optionalMethod.isPresent()) {
+      log.debug("Could not find method \"{}\" on class \"{}\".", methodName, clazz);
     }
+
+    return optionalMethod;
   }
 }
