@@ -4,10 +4,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.figtreelake</groupId>
 	<artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3</version>
 	<packaging>pom</packaging>
 	<name>COR Bean Processor Spring Boot Autoconfiguration</name>
   <description>A Spring Boot autoconfiguration to set up COR Bean Processor.</description>
+	<url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration/blob/main/LICENSE.md</url>
+		</license>
+	</licenses>
 
 	<developers>
 		<developer>
@@ -26,6 +34,17 @@
 		<module>autoconfigure</module>
 		<module>starter</module>
 	</modules>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
 
 	<build>
 		<plugins>
@@ -50,4 +69,33 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<gpgArguments>
+										<arg>--pinentry-mode</arg>
+										<arg>loopback</arg>
+									</gpgArguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

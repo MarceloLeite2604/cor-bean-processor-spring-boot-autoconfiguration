@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>com.figtreelake</groupId>
     <artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3</version>
   </parent>
 
   <artifactId>cor-bean-processor-spring-boot-autoconfigure</artifactId>
   <packaging>jar</packaging>
   <name>Autoconfigure</name>
-  <description>A Spring Boot autoconfiguration to help creating the chain of responsibility (COR) bean processor.
+  <description>A Spring Boot autoconfiguration to help creating the chain of
+    responsibility (COR) bean processor.
   </description>
+  <url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>
+        https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration/blob/main/LICENSE.md
+      </url>
+    </license>
+  </licenses>
 
   <developers>
     <developer>
@@ -23,11 +35,8 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
-    </connection>
-    <developerConnection>
-      scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
-    </developerConnection>
+    <connection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</connection>
+    <developerConnection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</developerConnection>
     <url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
   </scm>
 
@@ -127,4 +136,44 @@
     </plugins>
   </build>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.0.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
