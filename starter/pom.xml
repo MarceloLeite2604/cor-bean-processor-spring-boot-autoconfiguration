@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.figtreelake</groupId>
     <artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
-    <version>0.0.3</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>cor-bean-processor-spring-boot-starter</artifactId>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>com.figtreelake</groupId>
       <artifactId>cor-bean-processor-spring-boot-autoconfigure</artifactId>
-      <version>0.0.2</version>
+      <version>${revision}</version>
     </dependency>
   </dependencies>
 
@@ -53,74 +53,18 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.4.1</version>
+        <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
-          <quiet>true</quiet>
+          <skip>false</skip>
         </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.0.1</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <configuration>
-                  <gpgArguments>
-                    <arg>--pinentry-mode</arg>
-                    <arg>loopback</arg>
-                  </gpgArguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

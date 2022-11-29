@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.figtreelake</groupId>
     <artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
-    <version>0.0.3</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>cor-bean-processor-spring-boot-autoconfigure</artifactId>
@@ -16,7 +16,9 @@
   <description>A Spring Boot autoconfiguration to help creating the chain of
     responsibility (COR) bean processor.
   </description>
-  <url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+  <url>
+    https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration
+  </url>
 
   <licenses>
     <license>
@@ -35,9 +37,15 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</connection>
-    <developerConnection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</developerConnection>
-    <url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+    <connection>
+      scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
+    </connection>
+    <developerConnection>
+      scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
+    </developerConnection>
+    <url>
+      https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration
+    </url>
   </scm>
 
   <properties>
@@ -90,20 +98,26 @@
     </dependency>
   </dependencies>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>2.7.4</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.22.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -133,47 +147,20 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-  </distributionManagement>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.0.1</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <configuration>
-                  <gpgArguments>
-                    <arg>--pinentry-mode</arg>
-                    <arg>loopback</arg>
-                  </gpgArguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

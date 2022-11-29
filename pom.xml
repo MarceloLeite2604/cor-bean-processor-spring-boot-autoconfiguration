@@ -1,101 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.figtreelake</groupId>
-	<artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
-	<version>0.0.3</version>
-	<packaging>pom</packaging>
-	<name>COR Bean Processor Spring Boot Autoconfiguration</name>
-  <description>A Spring Boot autoconfiguration to set up COR Bean Processor.</description>
-	<url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.figtreelake</groupId>
+  <artifactId>cor-bean-processor-spring-boot-autoconfiguration</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+  <name>COR Bean Processor Spring Boot Autoconfiguration</name>
+  <description>A Spring Boot autoconfiguration to set up COR Bean Processor.
+  </description>
+  <url>
+    https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration
+  </url>
 
-	<licenses>
-		<license>
-			<name>MIT License</name>
-			<url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration/blob/main/LICENSE.md</url>
-		</license>
-	</licenses>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>
+        https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration/blob/main/LICENSE.md
+      </url>
+    </license>
+  </licenses>
 
-	<developers>
-		<developer>
-			<id>MarceloLeite2604</id>
-			<name>Marcelo Leite</name>
-		</developer>
-	</developers>
+  <developers>
+    <developer>
+      <id>MarceloLeite2604</id>
+      <name>Marcelo Leite</name>
+    </developer>
+  </developers>
 
-	<scm>
-		<connection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</connection>
-		<developerConnection>scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git</developerConnection>
-		<url>https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration</url>
-	</scm>
+  <scm>
+    <connection>
+      scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
+    </connection>
+    <developerConnection>
+      scm:git:https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration.git
+    </developerConnection>
+    <url>
+      https://github.com/MarceloLeite2604/cor-bean-processor-spring-boot-autoconfiguration
+    </url>
+  </scm>
 
-	<modules>
-		<module>autoconfigure</module>
-		<module>starter</module>
-	</modules>
+  <modules>
+    <module>autoconfigure</module>
+    <module>starter</module>
+  </modules>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		</repository>
-	</distributionManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>1.3.0</version>
+          <executions>
+            <execution>
+              <id>flatten</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>flatten</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>flatten.clean</id>
+              <phase>clean</phase>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <pomElements>
+              <name />
+              <description />
+              <url />
+              <scm />
+              <developers />
+            </pomElements>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.simplify4u.plugins</groupId>
+        <artifactId>sign-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.7.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.0.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-								<configuration>
-									<gpgArguments>
-										<arg>--pinentry-mode</arg>
-										<arg>loopback</arg>
-									</gpgArguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.simplify4u.plugins</groupId>
+              <artifactId>sign-maven-plugin</artifactId>
+              <version>1.0.1</version>
+              <executions>
+                <execution>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>sign</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <skipNoKey>false</skipNoKey>
+                <serverId>sign-key-id</serverId>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2
+          </url>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
 </project>
