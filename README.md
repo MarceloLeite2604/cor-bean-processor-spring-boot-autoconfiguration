@@ -1,7 +1,5 @@
 # Chain Of Responsibility (COR) Bean Processor Spring Boot Starter
 
-⚠️This is a working in progress. It is not ready for usage yet!
-
 **TL;DR:** You focus on the logic while we handle the chain!
 
 ![A screen capture presenting a sample code diff with the same project with and without COR Bean Processor library.](./documentation/images/image-01.png)
